@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /sework/se-console/
+Disallow: /sework/login
+Disallow: /sework/forgot-password
+Disallow: /sework/new-password
+Disallow: /cloudfiles/login
+Disallow: /cloudfiles/dashboard
+Disallow: /coding/workspace
+Disallow: /api/
+
+Sitemap: https://seone.site/sitemap.xml

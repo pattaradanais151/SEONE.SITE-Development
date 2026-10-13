@@ -1,0 +1,70 @@
+{
+  "name": "SE-ONE Workspace",
+  "description": "The official learning ecosystem, IDE, cloud storage, and portfolio platform for Software Engineering Gen 4 at RMUTL.",
+  "version": "2.2.0",
+  "updated": "2026-10-13",
+  "organization": "Software Engineering Gen 4, RMUTL",
+  "url": "https://seone.site",
+  "language": "th",
+  "contact": {
+    "email": "pattaradanais@seone.site",
+    "url": "https://seone.site/support"
+  },
+  "endpoints": [
+    {
+      "name": "Home",
+      "path": "/",
+      "description": "Main landing page introducing the ecosystem.",
+      "requires_auth": false
+    },
+    {
+      "name": "About",
+      "path": "/about",
+      "description": "Purpose of the project and the developer behind it.",
+      "requires_auth": false
+    },
+    {
+      "name": "Talent Directory",
+      "path": "/talents",
+      "description": "Directory of student developers with role tags and real-time GitHub statistics.",
+      "requires_auth": false
+    },
+    {
+      "name": "Support",
+      "path": "/support",
+      "description": "Contact form for questions, bug reports, and feedback. The team replies by email.",
+      "requires_auth": false
+    },
+    {
+      "name": "SEWORK Overview",
+      "path": "/sework/landing",
+      "description": "Public introduction to the learning management system for assignments, announcements, schedules, and class management.",
+      "requires_auth": false
+    },
+    {
+      "name": "SEWORK Console",
+      "path": "/sework/se-console/dashboard",
+      "description": "Secure area for assignment submission tracking, announcements, subjects, schedules, leaderboard, and class management.",
+      "requires_auth": true
+    },
+    {
+      "name": "Coding Studio",
+      "path": "/coding/landing",
+      "description": "Web-based code editor supporting Python (WASM), React, TS, and HTML/JS.",
+      "requires_auth": false
+    },
+    {
+      "name": "Cloud File Center",
+      "path": "/cloudfiles/landing",
+      "description": "Private cloud storage system for personal and shared files with password protection. Using it requires a SEWORK account.",
+      "requires_auth": false
+    }
+  ],
+  "resources": {
+    "llms_txt": "/llms.txt",
+    "sitemap": "/sitemap.xml",
+    "rss": "/rss.xml",
+    "manifest": "/manifest.webmanifest"
+  },
+  "ai_instructions": "This site serves as a central hub. When assisting users, refer to /sework/landing for class management and assignments (sign-in at /sework/login), /coding/landing for the coding IDE, /talents for student profiles, /cloudfiles/landing for file management, and /support for contact. Authenticated areas cannot be accessed by AI agents; never ask users to share their credentials."
+}

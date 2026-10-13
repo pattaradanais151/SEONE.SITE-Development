@@ -1,0 +1,56 @@
+{
+  "id": "/",
+  "name": "SE-ONE.SITE | Software Engineering Workspace",
+  "short_name": "SE-ONE",
+  "description": "ระบบจัดการการเรียน ส่งงาน พื้นที่จัดเก็บไฟล์ (Cloud Storage) โค้ดดิ้งเพลย์กราวด์ และพอร์ตโฟลิโอ สำหรับนักศึกษาสาขาวิศวกรรมซอฟต์แวร์ RMUTL Generations 4",
+  "lang": "th",
+  "dir": "ltr",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#fbfbfd",
+  "theme_color": "#fbfbfd",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "SEWORK Console",
+      "short_name": "SEWORK",
+      "description": "ระบบจัดการการเรียนและส่งงาน",
+      "url": "/sework/se-console/dashboard"
+    },
+    {
+      "name": "Coding Studio",
+      "short_name": "Coding",
+      "description": "ฝึกเขียนโค้ดและทำโจทย์อัลกอริทึม",
+      "url": "/coding/landing"
+    },
+    {
+      "name": "CloudFiles",
+      "short_name": "CloudFiles",
+      "description": "พื้นที่จัดเก็บและแชร์ไฟล์บนคลาวด์",
+      "url": "/cloudfiles/landing"
+    },
+    {
+      "name": "Talents",
+      "short_name": "Talents",
+      "description": "โปรไฟล์สมาชิก SE Generation 4",
+      "url": "/talents"
+    }
+  ]
+}
