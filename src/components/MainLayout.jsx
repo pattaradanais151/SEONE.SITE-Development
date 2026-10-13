@@ -3,7 +3,6 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Global, css } from '@emotion/react'
 import Navbar from './Navbar'
 import Logo from './Logo'
-import useContentProtection from './useContentProtection'
 
 const FONT_STACK =
   '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Noto Sans Thai", "Sarabun", Arial, sans-serif'
@@ -35,10 +34,6 @@ const globalStyles = css`
 export default function MainLayout() {
   const { pathname } = useLocation()
 
-  // ปิดคลิกขวา / คลุมดำ / copy
-  useContentProtection()
-
-  // เปลี่ยนหน้าแล้วเลื่อนกลับขึ้นบนสุด
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 })
   }, [pathname])
