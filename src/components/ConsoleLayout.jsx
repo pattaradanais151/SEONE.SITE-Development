@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -8,9 +8,11 @@ import { useAuth } from '../contexts/AuthContext'
 /* ------------------------------------------------------------------ */
 
 const THEME_KEY = 'se-theme'
+const LANG_KEY = 'se-lang'
 const TH_TZ = 'Asia/Bangkok'
+const NOTIF_LIMIT = 30
 
-// เวลา/วันที่ประเทศไทย (พ.ศ.) — fix timezone เป็น Asia/Bangkok ไม่ขึ้นกับเครื่องผู้ใช้
+// เวลา/วันที่ประเทศไทย — fix timezone เป็น Asia/Bangkok ไม่ขึ้นกับเครื่องผู้ใช้
 const TIME_FMT = new Intl.DateTimeFormat('th-TH', {
   timeZone: TH_TZ,
   hour: '2-digit',
@@ -18,13 +20,121 @@ const TIME_FMT = new Intl.DateTimeFormat('th-TH', {
   second: '2-digit',
   hourCycle: 'h23',
 })
-const DATE_FMT = new Intl.DateTimeFormat('th-TH', {
-  timeZone: TH_TZ,
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-})
+const DATE_FMT = {
+  th: new Intl.DateTimeFormat('th-TH', {
+    timeZone: TH_TZ,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
+  en: new Intl.DateTimeFormat('en-US', {
+    timeZone: TH_TZ,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }),
+}
+const LOCALE = { th: 'th-TH', en: 'en-US' }
+
+/* ---------- i18n (Sidebar + Header) ---------- */
+const I18N = {
+  th: {
+    clockLabel: 'วันและเวลาประเทศไทย',
+    ipTitleReady: 'Public IP — คลิกเพื่อคัดลอก',
+    ipTitle: 'Public IP',
+    ipLoading: 'กำลังตรวจสอบ...',
+    ipError: 'ตรวจสอบไม่ได้ · ลองใหม่',
+    ipCopied: 'คัดลอกแล้ว',
+    themeLabel: 'โหมดมืด (Beta)',
+    themeTipTitle: 'โหมดมืด (Beta)',
+    themeTipBody: 'อยู่ในช่วงทดสอบ บางหน้าอาจยังแสดงผลสีไม่สมบูรณ์',
+    languageLabel: 'ภาษา',
+    mainMenu: 'เมนูหลัก',
+    collapse: 'ย่อแถบเมนู',
+    expand: 'ขยายแถบเมนู',
+    profileImageAlt: 'รูปโปรไฟล์',
+    userFallback: 'ผู้ใช้',
+    myProfile: 'โปรไฟล์ของฉัน',
+    logout: 'ออกจากระบบ',
+    notif: {
+      title: 'การแจ้งเตือน',
+      bell: (n) => (n > 0 ? `การแจ้งเตือน (ยังไม่ได้อ่าน ${n} รายการ)` : 'การแจ้งเตือน'),
+      markAll: 'อ่านทั้งหมดแล้ว',
+      empty: 'ยังไม่มีการแจ้งเตือน',
+      emptyHint: 'เมื่อมีความเคลื่อนไหวใหม่ ระบบจะแจ้งที่นี่',
+      loadError: 'โหลดการแจ้งเตือนไม่สำเร็จ',
+      retry: 'ลองใหม่',
+    },
+    nav: {
+      home: 'หน้าหลัก',
+      academic: 'วิชาการ',
+      community: 'ชุมชน',
+      admin: 'การดูแลระบบ',
+      announcements: 'ประกาศ',
+      assignments: 'งานที่มอบหมาย',
+      subjects: 'รายวิชา',
+      schedules: 'ตารางเรียน',
+      sheetData: 'ข้อมูลชีต',
+      semesters: 'ภาคเรียน',
+      submissionLinks: 'ลิงก์ส่งงาน',
+      resourceCenter: 'ศูนย์ทรัพยากร',
+      contacts: 'รายชื่อติดต่อ',
+      internalLinks: 'ลิงก์ภายใน',
+      submissionTracking: 'ติดตามการส่งงาน',
+      leaderboard: 'อันดับคะแนน',
+      usersManagement: 'จัดการผู้ใช้',
+    },
+  },
+  en: {
+    clockLabel: 'Thailand date and time',
+    ipTitleReady: 'Public IP — click to copy',
+    ipTitle: 'Public IP',
+    ipLoading: 'Checking...',
+    ipError: 'Unavailable · Retry',
+    ipCopied: 'Copied',
+    themeLabel: 'Dark mode (Beta)',
+    themeTipTitle: 'Dark Mode (Beta)',
+    themeTipBody: 'Currently in testing. Some pages may not display colors correctly yet.',
+    languageLabel: 'Language',
+    mainMenu: 'Main menu',
+    collapse: 'Collapse sidebar',
+    expand: 'Expand sidebar',
+    profileImageAlt: 'Profile',
+    userFallback: 'User',
+    myProfile: 'My Profile',
+    logout: 'Log Out',
+    notif: {
+      title: 'Notifications',
+      bell: (n) => (n > 0 ? `Notifications (${n} unread)` : 'Notifications'),
+      markAll: 'Mark all as read',
+      empty: 'No notifications yet',
+      emptyHint: "We'll let you know here when something new happens.",
+      loadError: "Couldn't load notifications",
+      retry: 'Retry',
+    },
+    nav: {
+      home: 'Home',
+      academic: 'Academic',
+      community: 'Community',
+      admin: 'Administration',
+      announcements: 'Announcements',
+      assignments: 'Assignments',
+      subjects: 'Subjects',
+      schedules: 'Schedules',
+      sheetData: 'Sheet Data',
+      semesters: 'Semesters',
+      submissionLinks: 'Submission Links',
+      resourceCenter: 'Resource Center',
+      contacts: 'Contacts',
+      internalLinks: 'Internal Links',
+      submissionTracking: 'Submission Tracking',
+      leaderboard: 'Leaderboard',
+      usersManagement: 'Users Management',
+    },
+  },
+}
 
 const ICONS = {
   home: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -44,6 +154,7 @@ const ICONS = {
   moon: 'M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z',
   globe:
     'M21 12a9 9 0 11-18 0 9 9 0 0118 0zM3 12h18M12 3a13.5 13.5 0 013.5 9A13.5 13.5 0 0112 21a13.5 13.5 0 01-3.5-9A13.5 13.5 0 0112 3z',
+  check: 'M5 13l4 4L19 7',
 }
 
 const ring = 'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-se-primary/30'
@@ -65,11 +176,25 @@ function Icon({ d, className = 'h-5 w-5', strokeWidth = 1.75 }) {
   )
 }
 
+// "5 นาทีที่แล้ว" / "5 minutes ago" — เกิน 7 วันแสดงเป็นวันที่
+function timeAgo(iso, lang) {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ''
+  const rtf = new Intl.RelativeTimeFormat(LOCALE[lang], { numeric: 'auto' })
+  const diff = (date.getTime() - Date.now()) / 1000
+  const abs = Math.abs(diff)
+  if (abs < 60) return rtf.format(0, 'second')
+  if (abs < 3600) return rtf.format(Math.round(diff / 60), 'minute')
+  if (abs < 86400) return rtf.format(Math.round(diff / 3600), 'hour')
+  if (abs < 604800) return rtf.format(Math.round(diff / 86400), 'day')
+  return new Intl.DateTimeFormat(LOCALE[lang], { timeZone: TH_TZ, dateStyle: 'medium' }).format(date)
+}
+
 /* ------------------------------------------------------------------ */
-/*  ThaiClock — วันที่/เวลาประเทศไทย (แยก component เพื่อไม่ให้ layout re-render ทุกวินาที) */
+/*  Clock — วันที่/เวลาประเทศไทย (แยก component เพื่อไม่ให้ layout re-render ทุกวินาที) */
 /* ------------------------------------------------------------------ */
 
-function ThaiClock() {
+function Clock({ lang, t }) {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -78,7 +203,7 @@ function ThaiClock() {
   }, [])
 
   return (
-    <div className="flex min-w-0 items-center gap-3" aria-label="วันและเวลาประเทศไทย">
+    <div className="flex min-w-0 items-center gap-3" aria-label={t.clockLabel}>
       <time
         dateTime={now.toISOString()}
         className="flex items-baseline gap-1.5 text-[15px] font-semibold tabular-nums text-se-text-main"
@@ -87,7 +212,7 @@ function ThaiClock() {
         <span className="text-[11px] font-medium text-se-text-muted">GMT+7</span>
       </time>
       <span className="hidden h-4 w-px bg-se-border md:block" />
-      <span className="hidden truncate text-[13px] text-se-text-muted md:block">{DATE_FMT.format(now)}</span>
+      <span className="hidden truncate text-[13px] text-se-text-muted md:block">{DATE_FMT[lang].format(now)}</span>
     </div>
   )
 }
@@ -96,7 +221,7 @@ function ThaiClock() {
 /*  PublicIp — ดึง Public IP (คลิกเพื่อคัดลอก / ถ้าโหลดไม่ได้คลิกเพื่อลองใหม่)   */
 /* ------------------------------------------------------------------ */
 
-function PublicIp() {
+function PublicIp({ t }) {
   const [ip, setIp] = useState(null)
   const [status, setStatus] = useState('loading') // loading | ready | error
   const [attempt, setAttempt] = useState(0)
@@ -141,14 +266,13 @@ function PublicIp() {
     }
   }
 
-  const label =
-    status === 'loading' ? 'กำลังตรวจสอบ...' : status === 'error' ? 'ตรวจสอบไม่ได้ · ลองใหม่' : copied ? 'คัดลอกแล้ว' : ip
+  const label = status === 'loading' ? t.ipLoading : status === 'error' ? t.ipError : copied ? t.ipCopied : ip
 
   return (
     <button
       type="button"
       onClick={handleClick}
-      title={status === 'ready' ? 'Public IP — คลิกเพื่อคัดลอก' : 'Public IP'}
+      title={status === 'ready' ? t.ipTitleReady : t.ipTitle}
       className={`hidden h-8 max-w-[240px] items-center gap-2 rounded-full bg-se-border/40 px-3 text-[13px] transition-colors hover:bg-se-border/60 lg:flex ${ring}`}
     >
       <Icon d={ICONS.globe} className="h-4 w-4 shrink-0 text-se-text-muted" />
@@ -165,10 +289,284 @@ function PublicIp() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  NotificationBell — การแจ้งเตือนจริงจาก Supabase (ตาราง notifications) */
+/*  - โหลด 30 รายการล่าสุดของผู้ใช้ + อัปเดตแบบ Realtime                  */
+/*  - แสดงจำนวนที่ยังไม่ได้อ่าน, คลิกเพื่ออ่าน/ไปยังลิงก์, อ่านทั้งหมด       */
+/* ------------------------------------------------------------------ */
+
+function NotificationBell({ userId, lang, t }) {
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const [items, setItems] = useState([])
+  const [status, setStatus] = useState('loading') // loading | ready | error
+  const wrapRef = useRef(null)
+  const alive = useRef(true)
+  const n = t.notif
+
+  const unread = useMemo(() => items.filter((x) => !x.is_read).length, [items])
+
+  const load = useCallback(async () => {
+    if (!userId) return
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('id, title, body, link, is_read, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(NOTIF_LIMIT)
+    if (!alive.current) return
+    if (error) {
+      console.error('Notifications load error:', error.message)
+      setStatus('error')
+      return
+    }
+    setItems(data || [])
+    setStatus('ready')
+  }, [userId])
+
+  // โหลดครั้งแรก + subscribe Realtime
+  useEffect(() => {
+    alive.current = true
+    if (!userId) {
+      setItems([])
+      setStatus('ready')
+      return undefined
+    }
+    setStatus('loading')
+    load()
+
+    const channel = supabase
+      .channel(`notifications:${userId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
+        (payload) => {
+          setItems((prev) => {
+            if (payload.eventType === 'INSERT') {
+              if (prev.some((x) => x.id === payload.new.id)) return prev
+              return [payload.new, ...prev].slice(0, NOTIF_LIMIT)
+            }
+            if (payload.eventType === 'UPDATE') {
+              return prev.map((x) => (x.id === payload.new.id ? { ...x, ...payload.new } : x))
+            }
+            if (payload.eventType === 'DELETE') {
+              return prev.filter((x) => x.id !== payload.old.id)
+            }
+            return prev
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      alive.current = false
+      supabase.removeChannel(channel)
+    }
+  }, [userId, load])
+
+  // ปิดเมื่อคลิกที่อื่น หรือกด Esc
+  useEffect(() => {
+    if (!open) return undefined
+    const onMouseDown = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false)
+    }
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', onMouseDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  const markRead = async (id) => {
+    setItems((prev) => prev.map((x) => (x.id === id ? { ...x, is_read: true } : x)))
+    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id)
+    if (error) {
+      console.error('Mark read error:', error.message)
+      load()
+    }
+  }
+
+  const markAllRead = async () => {
+    if (!userId || unread === 0) return
+    setItems((prev) => prev.map((x) => ({ ...x, is_read: true })))
+    const { error } = await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', userId)
+      .eq('is_read', false)
+    if (error) {
+      console.error('Mark all read error:', error.message)
+      load()
+    }
+  }
+
+  const openItem = (item) => {
+    if (!item.is_read) markRead(item.id)
+    setOpen(false)
+    if (!item.link) return
+    if (/^https?:\/\//i.test(item.link)) window.open(item.link, '_blank', 'noopener,noreferrer')
+    else navigate(item.link)
+  }
+
+  return (
+    // มือถือ: ให้ dropdown อ้างอิงความกว้าง header ทั้งแถบ / เดสก์ท็อป: อ้างอิงปุ่มกระดิ่ง
+    <div className="sm:relative" ref={wrapRef}>
+      <button
+        type="button"
+        aria-label={n.bell(unread)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-se-border/40 hover:text-se-text-main ${ring} ${
+          open ? 'bg-se-border/40 text-se-text-main' : 'text-se-text-muted'
+        }`}
+      >
+        <Icon d={ICONS.bell} className="h-[22px] w-[22px]" />
+        {unread > 0 && (
+          <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-se-danger px-1 text-[10px] font-semibold leading-none text-white ring-2 ring-se-background">
+            {unread > 9 ? '9+' : unread}
+          </span>
+        )}
+      </button>
+
+      <div
+        role="dialog"
+        aria-label={n.title}
+        aria-hidden={!open}
+        className={`absolute inset-x-4 top-full z-40 mt-2 origin-top-right overflow-hidden rounded-2xl border border-se-border/60 bg-se-surface/90 shadow-[0_12px_40px_rgba(0,0,0,0.16)] backdrop-blur-xl transition-all duration-200 motion-reduce:transition-none sm:inset-x-auto sm:right-0 sm:w-[380px] ${
+          open ? 'visible scale-100 opacity-100' : 'invisible scale-95 opacity-0'
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-se-border/60 px-4 py-3">
+          <p className="text-[15px] font-semibold">{n.title}</p>
+          <button
+            type="button"
+            onClick={markAllRead}
+            disabled={unread === 0}
+            tabIndex={open ? 0 : -1}
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[12px] font-medium text-se-primary transition-colors hover:bg-se-primary/10 disabled:cursor-default disabled:text-se-text-muted disabled:opacity-60 disabled:hover:bg-transparent ${ring}`}
+          >
+            <Icon d={ICONS.check} strokeWidth={2.2} className="h-3.5 w-3.5" />
+            {n.markAll}
+          </button>
+        </div>
+
+        <div className="custom-scrollbar max-h-[min(420px,70vh)] overflow-y-auto p-1.5">
+          {status === 'loading' ? (
+            <ul className="space-y-2 p-2" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-se-border/60" />
+                  <span className="flex-1 space-y-2">
+                    <span className="block h-3 w-3/5 animate-pulse rounded bg-se-border/50" />
+                    <span className="block h-3 w-4/5 animate-pulse rounded bg-se-border/40" />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : status === 'error' ? (
+            <div className="px-4 py-8 text-center">
+              <p className="text-[13px] text-se-danger">{n.loadError}</p>
+              <button
+                type="button"
+                tabIndex={open ? 0 : -1}
+                onClick={() => {
+                  setStatus('loading')
+                  load()
+                }}
+                className={`mt-3 rounded-full bg-se-border/40 px-3 py-1.5 text-[12px] font-medium transition-colors hover:bg-se-border/60 ${ring}`}
+              >
+                {n.retry}
+              </button>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="flex flex-col items-center px-4 py-10 text-center">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-se-border/40 text-se-text-muted">
+                <Icon d={ICONS.bell} className="h-5 w-5" />
+              </span>
+              <p className="mt-3 text-[14px] font-semibold">{n.empty}</p>
+              <p className="mt-1 text-[12px] text-se-text-muted">{n.emptyHint}</p>
+            </div>
+          ) : (
+            <ul>
+              {items.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    tabIndex={open ? 0 : -1}
+                    onClick={() => openItem(item)}
+                    className={`flex w-full gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-se-border/30 ${ring}`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`mt-1.5 h-2 w-2 flex-shrink-0 rounded-full ${item.is_read ? 'bg-transparent' : 'bg-se-primary'}`}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={`block truncate text-[13px] ${
+                          item.is_read ? 'font-medium text-se-text-main/80' : 'font-semibold text-se-text-main'
+                        }`}
+                      >
+                        {item.title}
+                      </span>
+                      {item.body && (
+                        <span className="mt-0.5 line-clamp-2 block text-[12px] leading-snug text-se-text-muted">
+                          {item.body}
+                        </span>
+                      )}
+                      <span className="mt-1 block text-[11px] text-se-text-muted/80">
+                        {timeAgo(item.created_at, lang)}
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  LanguageSwitch — สลับภาษา TH / EN                                  */
+/* ------------------------------------------------------------------ */
+
+function LanguageSwitch({ lang, setLang, label }) {
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      className="flex h-8 items-center rounded-full bg-se-border/40 p-0.5 text-[12px] font-semibold"
+    >
+      {['th', 'en'].map((code) => (
+        <button
+          key={code}
+          type="button"
+          aria-pressed={lang === code}
+          onClick={() => setLang(code)}
+          className={`h-7 min-w-[34px] rounded-full px-2.5 transition-colors ${
+            lang === code
+              ? 'bg-se-surface text-se-text-main shadow-[0_1px_3px_rgba(0,0,0,0.18)]'
+              : 'text-se-text-muted hover:text-se-text-main'
+          } ${ring}`}
+        >
+          {code.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  ThemeToggle — สลับ Light / Dark (Beta)                              */
 /* ------------------------------------------------------------------ */
 
-function ThemeToggle({ theme, setTheme }) {
+function ThemeToggle({ theme, setTheme, t }) {
   const isDark = theme === 'dark'
 
   return (
@@ -177,7 +575,7 @@ function ThemeToggle({ theme, setTheme }) {
         type="button"
         role="switch"
         aria-checked={isDark}
-        aria-label="Dark mode (Beta)"
+        aria-label={t.themeLabel}
         onClick={() => setTheme(isDark ? 'light' : 'dark')}
         className={`relative inline-flex h-7 w-12 flex-shrink-0 items-center rounded-full transition-colors duration-300 motion-reduce:transition-none ${ring} ${
           isDark ? 'bg-se-primary' : 'bg-se-border'
@@ -203,8 +601,8 @@ function ThemeToggle({ theme, setTheme }) {
 
       {/* Tooltip */}
       <div className="pointer-events-none absolute right-0 top-full z-40 mt-2 w-64 rounded-xl border border-se-border/60 bg-se-surface/90 p-3 text-xs leading-relaxed text-se-text-muted opacity-0 shadow-[0_12px_40px_rgba(0,0,0,0.16)] backdrop-blur-xl transition-opacity duration-200 group-focus-within:opacity-100 group-hover:opacity-100">
-        <p className="mb-0.5 font-semibold text-se-text-main">Dark Mode (Beta)</p>
-        อยู่ในช่วงทดสอบ บางหน้าอาจยังแสดงผลสีไม่สมบูรณ์
+        <p className="mb-0.5 font-semibold text-se-text-main">{t.themeTipTitle}</p>
+        {t.themeTipBody}
       </div>
     </div>
   )
@@ -215,7 +613,7 @@ function ThemeToggle({ theme, setTheme }) {
 /* ------------------------------------------------------------------ */
 
 export default function ConsoleLayout() {
-  const { profile, setSession, setProfile } = useAuth()
+  const { user, profile, setSession, setProfile } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -229,8 +627,17 @@ export default function ConsoleLayout() {
       return 'light'
     }
   })
+  const [lang, setLang] = useState(() => {
+    try {
+      return localStorage.getItem(LANG_KEY) === 'en' ? 'en' : 'th'
+    } catch {
+      return 'th'
+    }
+  })
 
+  const t = I18N[lang]
   const profileMenuRef = useRef(null)
+  const userId = user?.id || profile?.id || null
 
   const isCeoOrManager = ['ceo', 'manager'].includes(profile?.role)
 
@@ -246,6 +653,21 @@ export default function ConsoleLayout() {
     }
   }, [theme])
 
+  // ภาษา: จำค่าไว้ + ตั้ง <html lang> ให้ถูกต้อง (มีผลกับการตัดคำ/ฟอนต์)
+  useEffect(() => {
+    const root = document.documentElement
+    const prev = root.lang
+    root.lang = lang
+    try {
+      localStorage.setItem(LANG_KEY, lang)
+    } catch {
+      /* ignore */
+    }
+    return () => {
+      root.lang = prev
+    }
+  }, [lang])
+
   // ออกจาก Console แล้วคืนค่า (Dark Mode ยังเป็น Beta เฉพาะในหน้า Console)
   useEffect(
     () => () => {
@@ -255,7 +677,7 @@ export default function ConsoleLayout() {
     []
   )
 
-  // ปิด Dropdown เมื่อคลิกที่อื่น หรือกด Esc
+  // ปิด Profile Dropdown เมื่อคลิกที่อื่น หรือกด Esc
   useEffect(() => {
     function handleClickOutside(event) {
       if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
@@ -282,40 +704,43 @@ export default function ConsoleLayout() {
 
   const isActive = (path) => location.pathname.includes(path)
 
-  // จัดกลุ่มเมนู Navigation
+  // จัดกลุ่มเมนู Navigation — ใช้ id เป็น key (ไม่เปลี่ยนตามภาษา)
   const navGroups = [
-    { title: 'Home', icon: ICONS.home, path: '/dashboard' },
+    { id: 'home', title: t.nav.home, icon: ICONS.home, path: '/dashboard' },
     {
-      title: 'Academic',
+      id: 'academic',
+      title: t.nav.academic,
       icon: ICONS.academic,
       children: [
-        { title: 'Announcements', path: '/announcements' },
-        { title: 'Assignments', path: '/assignments' },
-        { title: 'Subjects', path: '/subjects' },
-        { title: 'Schedules', path: '/schedules' },
-        { title: 'Sheet Data', path: '/sheet-data' },
-        { title: 'Semesters', path: '/semesters' },
-        { title: 'Submission Links', path: '/submission-links' },
-        { title: 'Resource Center', path: '/resource-center' },
+        { id: 'announcements', title: t.nav.announcements, path: '/announcements' },
+        { id: 'assignments', title: t.nav.assignments, path: '/assignments' },
+        { id: 'subjects', title: t.nav.subjects, path: '/subjects' },
+        { id: 'schedules', title: t.nav.schedules, path: '/schedules' },
+        { id: 'sheet-data', title: t.nav.sheetData, path: '/sheet-data' },
+        { id: 'semesters', title: t.nav.semesters, path: '/semesters' },
+        { id: 'submission-links', title: t.nav.submissionLinks, path: '/submission-links' },
+        { id: 'resource-center', title: t.nav.resourceCenter, path: '/resource-center' },
       ],
     },
     {
-      title: 'Community',
+      id: 'community',
+      title: t.nav.community,
       icon: ICONS.community,
       children: [
-        { title: 'Contacts', path: '/contacts' },
-        { title: 'Internal Links', path: '/internal-links' },
+        { id: 'contacts', title: t.nav.contacts, path: '/contacts' },
+        { id: 'internal-links', title: t.nav.internalLinks, path: '/internal-links' },
       ],
     },
     ...(isCeoOrManager
       ? [
           {
-            title: 'Administration',
+            id: 'admin',
+            title: t.nav.admin,
             icon: ICONS.admin,
             children: [
-              { title: 'Submission Tracking', path: '/submission-tracking' },
-              { title: 'Leaderboard', path: '/leaderboard' },
-              { title: 'Users Management', path: '/users-management' },
+              { id: 'submission-tracking', title: t.nav.submissionTracking, path: '/submission-tracking' },
+              { id: 'leaderboard', title: t.nav.leaderboard, path: '/leaderboard' },
+              { id: 'users-management', title: t.nav.usersManagement, path: '/users-management' },
             ],
           },
         ]
@@ -328,7 +753,7 @@ export default function ConsoleLayout() {
       const next = { ...prev }
       navGroups.forEach((group) => {
         if (group.children && group.children.some((child) => isActive(child.path))) {
-          next[group.title] = true
+          next[group.id] = true
         }
       })
       return next
@@ -336,13 +761,13 @@ export default function ConsoleLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, isCeoOrManager])
 
-  const toggleGroup = (title) => {
-    setExpandedGroups((prev) => ({ ...prev, [title]: !prev[title] }))
+  const toggleGroup = (id) => {
+    setExpandedGroups((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
   const displayName = profile?.first_name
     ? `${profile.first_name}${profile.last_name ? ` ${profile.last_name.charAt(0)}.` : ''}`
-    : 'User'
+    : t.userFallback
 
   return (
     <div className="flex h-screen overflow-hidden bg-se-background font-sans text-se-text-main antialiased">
@@ -358,7 +783,8 @@ export default function ConsoleLayout() {
             <img
               src="/logo.png"
               alt="SE-CONSOLE"
-              className="h-9 w-9 flex-shrink-0 rounded-[10px] bg-black object-contain p-1.5"
+              draggable={false}
+              className="h-9 w-9 flex-shrink-0 rounded-[10px] object-contain"
             />
             {!isCollapsed && (
               <span className="whitespace-nowrap text-[17px] font-semibold tracking-tight">SE-CONSOLE</span>
@@ -367,7 +793,7 @@ export default function ConsoleLayout() {
         </div>
 
         {/* Navigation Links */}
-        <nav className="custom-scrollbar flex-1 overflow-y-auto px-3 py-4" aria-label="เมนูหลัก">
+        <nav className="custom-scrollbar flex-1 overflow-y-auto px-3 py-4" aria-label={t.mainMenu}>
           <div className="space-y-1">
             {navGroups.map((group) => {
               // เมนูเดี่ยว (ไม่มีลูก)
@@ -375,9 +801,10 @@ export default function ConsoleLayout() {
                 const active = isActive(group.path)
                 return (
                   <Link
-                    key={group.title}
+                    key={group.id}
                     to={`/sework/se-console${group.path}`}
                     title={isCollapsed ? group.title : undefined}
+                    aria-label={isCollapsed ? group.title : undefined}
                     aria-current={active ? 'page' : undefined}
                     className={`flex h-10 items-center gap-3 rounded-lg px-3 text-[14px] transition-colors ${
                       isCollapsed ? 'justify-center' : ''
@@ -394,18 +821,19 @@ export default function ConsoleLayout() {
               }
 
               // เมนูแบบมีลูก (Accordion)
-              const isGroupExpanded = !isCollapsed && !!expandedGroups[group.title]
+              const isGroupExpanded = !isCollapsed && !!expandedGroups[group.id]
               const hasActiveChild = group.children.some((child) => isActive(child.path))
 
               return (
-                <div key={group.title} className="flex flex-col">
+                <div key={group.id} className="flex flex-col">
                   <button
                     type="button"
                     aria-expanded={isGroupExpanded}
                     title={isCollapsed ? group.title : undefined}
+                    aria-label={isCollapsed ? group.title : undefined}
                     onClick={() => {
                       if (isCollapsed) setIsCollapsed(false)
-                      toggleGroup(group.title)
+                      toggleGroup(group.id)
                     }}
                     className={`flex h-10 w-full items-center rounded-lg px-3 text-[14px] transition-colors ${
                       isCollapsed ? 'justify-center' : 'justify-between'
@@ -452,7 +880,7 @@ export default function ConsoleLayout() {
                             const childActive = isActive(child.path)
                             return (
                               <Link
-                                key={child.path}
+                                key={child.id}
                                 to={`/sework/se-console${child.path}`}
                                 tabIndex={isGroupExpanded ? 0 : -1}
                                 aria-current={childActive ? 'page' : undefined}
@@ -481,7 +909,8 @@ export default function ConsoleLayout() {
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            aria-label={isCollapsed ? 'ขยายแถบเมนู' : 'ย่อแถบเมนู'}
+            aria-label={isCollapsed ? t.expand : t.collapse}
+            title={isCollapsed ? t.expand : undefined}
             className={`flex h-10 w-full items-center justify-center rounded-lg text-se-text-muted transition-colors hover:bg-se-border/30 hover:text-se-text-main ${ring}`}
           >
             <Icon
@@ -490,7 +919,7 @@ export default function ConsoleLayout() {
                 isCollapsed ? 'rotate-180' : ''
               }`}
             />
-            {!isCollapsed && <span className="ml-3 text-sm font-medium">ย่อแถบเมนู</span>}
+            {!isCollapsed && <span className="ml-3 whitespace-nowrap text-sm font-medium">{t.collapse}</span>}
           </button>
         </div>
       </aside>
@@ -500,23 +929,17 @@ export default function ConsoleLayout() {
         {/* Top Navigation — โปร่งแสง + blur ให้เนื้อหาเลื่อนลอดด้านใต้ได้แบบ apple.com */}
         <header className="absolute inset-x-0 top-0 z-30 flex h-14 items-center justify-between gap-4 border-b border-se-border/60 bg-se-background/70 px-4 backdrop-blur-xl backdrop-saturate-150 md:px-8">
           {/* ซ้าย: วันที่/เวลาประเทศไทย */}
-          <ThaiClock />
+          <Clock lang={lang} t={t} />
 
-          {/* ขวา: IP / แจ้งเตือน / โหมดสี / โปรไฟล์ */}
+          {/* ขวา: IP / ภาษา / แจ้งเตือน / โหมดสี / โปรไฟล์ */}
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
-            <PublicIp />
+            <PublicIp t={t} />
 
-            {/* Notification Bell */}
-            <button
-              type="button"
-              aria-label="การแจ้งเตือน"
-              className={`relative flex h-9 w-9 items-center justify-center rounded-full text-se-text-muted transition-colors hover:bg-se-border/40 hover:text-se-text-main ${ring}`}
-            >
-              <Icon d={ICONS.bell} className="h-[22px] w-[22px]" />
-              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-se-background bg-se-danger"></span>
-            </button>
+            <LanguageSwitch lang={lang} setLang={setLang} label={t.languageLabel} />
 
-            <ThemeToggle theme={theme} setTheme={setTheme} />
+            <NotificationBell userId={userId} lang={lang} t={t} />
+
+            <ThemeToggle theme={theme} setTheme={setTheme} t={t} />
 
             <div className="mx-0.5 hidden h-5 w-px bg-se-border sm:block"></div>
 
@@ -531,7 +954,7 @@ export default function ConsoleLayout() {
               >
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-se-primary/10 text-sm font-semibold text-se-primary">
                   {profile?.profile_image_url ? (
-                    <img src={profile.profile_image_url} alt="Profile" className="h-full w-full object-cover" />
+                    <img src={profile.profile_image_url} alt={t.profileImageAlt} className="h-full w-full object-cover" />
                   ) : (
                     (profile?.first_name || profile?.email || '?').charAt(0).toUpperCase()
                   )}
@@ -556,7 +979,7 @@ export default function ConsoleLayout() {
               >
                 <div className="mb-1.5 border-b border-se-border/60 px-3 pb-3 pt-2">
                   <p className="text-sm font-semibold">
-                    {profile?.first_name || 'User'} {profile?.last_name || ''}
+                    {profile?.first_name || t.userFallback} {profile?.last_name || ''}
                   </p>
                   <p className="mt-0.5 truncate text-xs text-se-text-muted">{profile?.email}</p>
                   <span className="mt-2 inline-flex items-center rounded-full bg-se-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase text-se-primary">
@@ -572,7 +995,7 @@ export default function ConsoleLayout() {
                   className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-se-border/30 ${ring}`}
                 >
                   <Icon d={ICONS.user} className="h-4 w-4 text-se-text-muted" />
-                  My Profile
+                  {t.myProfile}
                 </Link>
 
                 <button
@@ -583,7 +1006,7 @@ export default function ConsoleLayout() {
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-se-danger transition-colors hover:bg-se-danger/10 ${ring}`}
                 >
                   <Icon d={ICONS.logout} className="h-4 w-4" />
-                  Log Out
+                  {t.logout}
                 </button>
               </div>
             </div>
@@ -593,7 +1016,8 @@ export default function ConsoleLayout() {
         {/* Page Content — เว้นด้านบนเท่าความสูง header (h-14) */}
         <main className="custom-scrollbar h-full overflow-y-auto pt-14">
           <div className="p-4 md:p-8">
-            <Outlet />
+            {/* ส่งภาษา/ธีมให้หน้าลูกใช้ผ่าน useOutletContext() */}
+            <Outlet context={{ lang, theme }} />
           </div>
         </main>
       </div>
