@@ -1,175 +1,339 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 
-export default function LegalCenter() {
-  const [activeTab, setActiveTab] = useState('privacy')
+/* ------------------------------------------------------------------ */
+/*  Config                                                             */
+/* ------------------------------------------------------------------ */
+// แก้วันที่อัปเดตที่เดียว แล้วจะเปลี่ยนในทุกเอกสาร
+const LAST_UPDATED = 'พฤศจิกายน 2026'
 
-  useEffect(() => {
-    document.title = 'Legal Center | SE-ONE'
-    window.scrollTo(0, 0)
-  }, [activeTab])
+/* ------------------------------------------------------------------ */
+/*  เนื้อหาเอกสาร                                                       */
+/*  - items ในลิสต์เป็นได้ทั้ง string หรือ { term, text } (term = ตัวหนา)  */
+/* ------------------------------------------------------------------ */
+const DOCUMENTS = [
+  {
+    id: 'privacy',
+    tabTitle: 'Privacy Policy',
+    tabLabel: 'นโยบายความเป็นส่วนตัว',
+    title: 'Privacy Policy',
+    subtitle: 'นโยบายความเป็นส่วนตัว',
+    intro: [
+      'แพลตฟอร์ม SE-ONE และระบบภายใน (รวมถึง SE-CONSOLE) ให้ความสำคัญกับการคุ้มครองข้อมูลส่วนบุคคลของคุณ นโยบายนี้อธิบายถึงวิธีการที่เรารวบรวม ใช้งาน และปกป้องข้อมูลของคุณเมื่อคุณใช้บริการของเรา',
+    ],
+    sections: [
+      {
+        heading: '1. ข้อมูลที่เราเก็บรวบรวม',
+        list: {
+          type: 'ul',
+          items: [
+            { term: 'ข้อมูลบัญชี:', text: 'ชื่อ, นามสกุล, ชื่อเล่น, รหัสนักศึกษา, อีเมล, และรหัสผ่าน' },
+            { term: 'ข้อมูลการศึกษา:', text: 'ชั้นปี, กลุ่มเรียน (SEC), คะแนน (XP), ประวัติการส่งงาน' },
+            { term: 'ข้อมูลการติดต่อ (ทางเลือก):', text: 'เบอร์โทรศัพท์, Facebook, Instagram, GitHub' },
+          ],
+        },
+      },
+      {
+        heading: '2. วิธีการใช้ข้อมูลของคุณ',
+        list: {
+          type: 'ul',
+          items: [
+            'เพื่อสร้างและจัดการบัญชีผู้ใช้สำหรับการเรียนการสอน',
+            'เพื่อติดตามประเมินผลการเรียนและการส่งงานผ่าน SE-CONSOLE',
+            'เพื่ออำนวยความสะดวกในการติดต่อสื่อสารระหว่างนักศึกษาและผู้สอน (ผ่านฟีเจอร์ Contacts)',
+          ],
+        },
+      },
+      {
+        heading: '3. การรักษาความปลอดภัย',
+        paragraphs: [
+          'เราใช้มาตรฐานการรักษาความปลอดภัยทางเทคนิค (เช่น การเข้ารหัสฐานข้อมูลผ่าน Supabase Row Level Security) เพื่อป้องกันการเข้าถึง การแก้ไข หรือการเปิดเผยข้อมูลของคุณโดยไม่ได้รับอนุญาต',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'pdpa',
+    tabTitle: 'PDPA',
+    tabLabel: 'นโยบายคุ้มครองข้อมูลส่วนบุคคล',
+    title: 'PDPA Compliance',
+    subtitle: 'นโยบายคุ้มครองข้อมูลส่วนบุคคลตามกฎหมาย PDPA',
+    intro: [
+      'ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ของประเทศไทย SE-ONE เคารพสิทธิในฐานะเจ้าของข้อมูลส่วนบุคคลของคุณ และมุ่งมั่นที่จะดำเนินการตามกฎหมายอย่างเคร่งครัด',
+    ],
+    sections: [
+      {
+        heading: 'สิทธิของเจ้าของข้อมูลส่วนบุคคล (Data Subject Rights)',
+        list: {
+          type: 'ol',
+          items: [
+            { term: 'สิทธิในการเข้าถึงข้อมูล:', text: 'คุณสามารถเข้าถึงและดูข้อมูลส่วนบุคคลของคุณได้ผ่านเมนู “My Profile”' },
+            { term: 'สิทธิในการแก้ไขข้อมูล:', text: 'คุณมีสิทธิแก้ไขข้อมูลส่วนบุคคลให้ถูกต้อง เป็นปัจจุบัน และสมบูรณ์' },
+            {
+              term: 'สิทธิในการขอให้ลบข้อมูล (Right to be forgotten):',
+              text: 'คุณสามารถร้องขอให้ผู้ดูแลระบบ (Admin/Manager) ลบบัญชีและข้อมูลส่วนบุคคลของคุณออกจากระบบได้เมื่อสิ้นสุดสถานะการเป็นนักศึกษา',
+            },
+            {
+              term: 'สิทธิในการเพิกถอนความยินยอม:',
+              text: 'คุณสามารถยกเลิกการให้ข้อมูลทางสังคม (Social Media) หรือเบอร์โทรศัพท์ได้ตลอดเวลาโดยการลบออกจากโปรไฟล์ตนเอง',
+            },
+          ],
+        },
+      },
+      {
+        heading: 'การเปิดเผยข้อมูลต่อบุคคลที่สาม',
+        paragraphs: [
+          'เราจะไม่มีการนำข้อมูลส่วนบุคคลของคุณไปขาย แลกเปลี่ยน หรือเปิดเผยต่อบุคคลภายนอกโดยเด็ดขาด ข้อมูลในสมุดรายชื่อ (Contacts) จะถูกจำกัดให้เห็นได้เฉพาะสมาชิกที่เข้าสู่ระบบและอยู่ภายใต้ระบบ SE-ONE เท่านั้น',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'terms',
+    tabTitle: 'Terms of Use',
+    tabLabel: 'ข้อตกลงการใช้งาน',
+    title: 'Terms of Use',
+    subtitle: 'ข้อตกลงและเงื่อนไขการใช้งาน',
+    intro: [
+      'การเข้าถึงและใช้งานระบบ SE-ONE, SE-CONSOLE, CODING STUDIO หรือบริการอื่นๆ ในเครือ (รวมเรียกว่า “บริการ”) ถือว่าคุณยอมรับข้อตกลงการใช้งานเหล่านี้',
+    ],
+    sections: [
+      {
+        heading: '1. บัญชีผู้ใช้และความปลอดภัย',
+        list: {
+          type: 'ul',
+          items: [
+            'คุณต้องรักษาความลับของรหัสผ่านบัญชีของคุณ หากพบการใช้งานที่ผิดปกติ คุณต้องแจ้งให้ผู้ดูแลระบบทราบทันที',
+            'ระบบถูกสงวนสิทธิ์ไว้สำหรับนักศึกษาและบุคลากรที่เกี่ยวข้องเท่านั้น ไม่อนุญาตให้โอนสิทธิ์การใช้งานบัญชีให้บุคคลภายนอก',
+          ],
+        },
+      },
+      {
+        heading: '2. พฤติกรรมที่ยอมรับได้ (Code of Conduct)',
+        list: {
+          type: 'ul',
+          items: [
+            'คุณตกลงที่จะใช้บริการเพื่อการศึกษาเท่านั้น',
+            'ห้ามอัปโหลดไฟล์ที่มีไวรัส สคริปต์ประสงค์ร้าย หรือเนื้อหาที่ผิดกฎหมาย/ละเมิดลิขสิทธิ์ลงในระบบ',
+            'การทุจริตในการส่งงานผ่านระบบ หรือพยายามเข้าถึงสิทธิ์ผู้ดูแลระบบโดยไม่ได้รับอนุญาต จะมีบทลงโทษทางวิชาการและอาจถูกระงับบัญชีถาวร',
+          ],
+        },
+      },
+      {
+        heading: '3. การแก้ไขข้อตกลง',
+        paragraphs: [
+          'SE-ONE ขอสงวนสิทธิ์ในการปรับปรุง เปลี่ยนแปลง หรือแก้ไขข้อตกลงนี้ได้ทุกเมื่อ โดยจะมีการประกาศแจ้งให้ทราบในหน้าระบบ',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'license',
+    tabTitle: 'License Agreement',
+    tabLabel: 'ข้อตกลงอนุญาตให้ใช้สิทธิ',
+    title: 'License Agreement',
+    subtitle: 'ข้อตกลงอนุญาตให้ใช้สิทธิซอฟต์แวร์ (EULA)',
+    intro: [
+      'ข้อตกลงฉบับนี้เป็นสัญญาระหว่างคุณ (ผู้ใช้งาน) และ InfiniteStack Corp. / ทีมผู้พัฒนาแพลตฟอร์ม SE-ONE',
+    ],
+    sections: [
+      {
+        heading: '1. การอนุญาตให้ใช้สิทธิ',
+        paragraphs: [
+          'เรามอบสิทธิ์แบบไม่ผูกขาด (Non-exclusive) และไม่สามารถโอนได้ (Non-transferable) ในการเข้าถึงและใช้งานซอฟต์แวร์ผ่านเว็บเบราว์เซอร์ เพื่อวัตถุประสงค์ในการศึกษาและจัดการงานภายในองค์กร/สาขาวิชาเท่านั้น',
+        ],
+      },
+      {
+        heading: '2. ทรัพย์สินทางปัญญา',
+        paragraphs: [
+          'ซอร์สโค้ด (Source Code), การออกแบบ UI/UX, โลโก้, กราฟิก, และโครงสร้างฐานข้อมูลของระบบ ถือเป็นทรัพย์สินทางปัญญาของ InfiniteStack Corp. ไม่อนุญาตให้คัดลอก ทำซ้ำ ดัดแปลง หรือทำวิศวกรรมย้อนกลับ (Reverse Engineer) โดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร',
+        ],
+      },
+      {
+        heading: '3. ข้อจำกัดความรับผิดชอบ (Disclaimer)',
+        paragraphs: [
+          'ซอฟต์แวร์นี้ให้บริการในลักษณะ “ตามที่เป็นอยู่” (As is) โดยไม่มีการรับประกันใดๆ ทั้งสิ้น ทีมผู้พัฒนาจะไม่รับผิดชอบต่อความสูญเสียของข้อมูล หรือความเสียหายที่เกิดจากการใช้งานระบบขัดข้อง',
+        ],
+      },
+    ],
+  },
+]
 
-  const tabs = [
-    { id: 'privacy', title: 'Privacy Policy', label: 'นโยบายความเป็นส่วนตัว' },
-    { id: 'pdpa', title: 'PDPA', label: 'นโยบายคุ้มครองข้อมูลส่วนบุคคล' },
-    { id: 'terms', title: 'Terms of Use', label: 'ข้อตกลงการใช้งาน' },
-    { id: 'license', title: 'License Agreement', label: 'ข้อตกลงอนุญาตให้ใช้สิทธิ' }
-  ]
+/* ------------------------------------------------------------------ */
+/*  Styles                                                             */
+/* ------------------------------------------------------------------ */
+const FADE_CSS = `
+@keyframes legal-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.legal-fade { animation: legal-fade-in .35s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .legal-fade { animation: none; }
+}
+`
+
+const linkClass =
+  'rounded text-sm font-medium focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-se-primary/30'
+
+/* ------------------------------------------------------------------ */
+/*  ชิ้นส่วนย่อย                                                        */
+/* ------------------------------------------------------------------ */
+function ListItem({ item }) {
+  if (typeof item === 'string') return <li>{item}</li>
+  return (
+    <li>
+      <strong className="font-semibold">{item.term}</strong> {item.text}
+    </li>
+  )
+}
+
+function Section({ section }) {
+  const isOrdered = section.list?.type === 'ol'
+  const ListTag = isOrdered ? 'ol' : 'ul'
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9FC] font-sans text-gray-900">
-      {/* 2. Main Content Layout */}
-      <main className="flex-grow max-w-7xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-8 lg:gap-12">
-        
-        {/* Left Sidebar Navigation */}
-        <aside className="w-full md:w-64 flex-shrink-0">
-          <div className="sticky top-28">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-3">Legal Documents</h3>
-            <nav className="flex flex-col space-y-1">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`text-left px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                    activeTab === tab.id 
-                      ? 'bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-500/20' 
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="block">{tab.title}</div>
-                  <div className={`text-[11px] mt-0.5 font-medium ${activeTab === tab.id ? 'text-blue-400' : 'text-gray-400'}`}>
-                    {tab.label}
-                  </div>
-                </button>
-              ))}
+    <section className="mt-10">
+      <h3 className="text-[21px] font-semibold leading-snug tracking-tight text-se-text-main">
+        {section.heading}
+      </h3>
+
+      {section.paragraphs?.map((p) => (
+        <p key={p} className="mt-3">
+          {p}
+        </p>
+      ))}
+
+      {section.list && (
+        <ListTag
+          className={`mt-3 space-y-2.5 pl-6 marker:text-se-text-muted ${
+            isOrdered ? 'list-decimal' : 'list-disc'
+          }`}
+        >
+          {section.list.items.map((item, i) => (
+            <ListItem key={i} item={item} />
+          ))}
+        </ListTag>
+      )}
+    </section>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+
+export default function LegalCenter() {
+  // เอกสารที่เปิดอยู่ผูกกับ URL hash เช่น #terms → แชร์ลิงก์ตรงไปที่เอกสารได้ และปุ่ม Back ใช้งานได้
+  const { hash } = useLocation()
+  const doc = DOCUMENTS.find((d) => `#${d.id}` === hash) ?? DOCUMENTS[0]
+
+  useEffect(() => {
+    document.title = `${doc.title} | Legal Center | SE-ONE`
+    window.scrollTo(0, 0)
+  }, [doc.id, doc.title])
+
+  return (
+    <div className="min-h-screen bg-se-background antialiased">
+      <style>{FADE_CSS}</style>
+
+      <main className="mx-auto w-full max-w-6xl px-5 pb-20 pt-12 sm:px-6 md:pt-16">
+        {/* ---------- Page header ---------- */}
+        <header className="mb-10 md:mb-14">
+          <h1 className="text-[34px] font-semibold leading-tight tracking-tight text-se-text-main md:text-[44px]">
+            Legal Center
+          </h1>
+          <p className="mt-2 text-[17px] leading-relaxed text-se-text-muted">
+            นโยบายและข้อตกลงที่เกี่ยวข้องกับการใช้งาน SE-ONE
+          </p>
+        </header>
+
+        <div className="flex flex-col gap-6 md:flex-row md:gap-10 lg:gap-14">
+          {/* ---------- Navigation (มือถือ: แถบเลื่อนแนวนอน / เดสก์ท็อป: sidebar) ---------- */}
+          <aside className="md:w-64 md:shrink-0">
+            <nav aria-label="เอกสารทางกฎหมาย" className="md:sticky md:top-28">
+              <p className="mb-3 hidden px-4 text-[13px] font-semibold text-se-text-muted md:block">
+                เอกสารทางกฎหมาย
+              </p>
+
+              <ul className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6 md:mx-0 md:flex-col md:gap-1 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+                {DOCUMENTS.map((d) => {
+                  const active = d.id === doc.id
+                  return (
+                    <li key={d.id} className="shrink-0 md:shrink">
+                      <Link
+                        to={`#${d.id}`}
+                        replace
+                        aria-current={active ? 'page' : undefined}
+                        className={`block rounded-2xl px-4 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-se-primary/30 md:py-3 ${
+                          active
+                            ? 'bg-se-primary/10 text-se-primary'
+                            : 'bg-se-surface text-se-text-muted ring-1 ring-se-border hover:text-se-text-main md:bg-transparent md:ring-0 md:hover:bg-se-border/40'
+                        }`}
+                      >
+                        <span className="block whitespace-nowrap text-[15px] font-semibold md:whitespace-normal">
+                          {d.tabTitle}
+                        </span>
+                        <span
+                          className={`mt-0.5 hidden text-[12.5px] leading-snug md:block ${
+                            active ? 'text-se-primary/70' : 'text-se-text-muted'
+                          }`}
+                        >
+                          {d.tabLabel}
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
             </nav>
+          </aside>
+
+          {/* ---------- Document ---------- */}
+          <div className="min-w-0 flex-1">
+            <article
+              aria-labelledby="legal-doc-title"
+              className="rounded-[28px] bg-se-surface px-6 py-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_48px_rgba(0,0,0,0.07)] sm:px-10 sm:py-12 lg:px-14 md:min-h-[560px]"
+            >
+              <div key={doc.id} className="legal-fade max-w-[720px]">
+                <header className="border-b border-se-border pb-8">
+                  <h2
+                    id="legal-doc-title"
+                    className="text-[32px] font-semibold leading-tight tracking-tight text-se-text-main"
+                  >
+                    {doc.title}
+                  </h2>
+                  <p className="mt-2 text-[17px] leading-relaxed text-se-text-muted">{doc.subtitle}</p>
+                  <p className="mt-1 text-sm text-se-text-muted">อัปเดตล่าสุด: {LAST_UPDATED}</p>
+                </header>
+
+                <div className="pt-8 text-[16px] leading-[1.8] text-se-text-main sm:text-[17px]">
+                  {doc.intro.map((p) => (
+                    <p key={p}>{p}</p>
+                  ))}
+
+                  {doc.sections.map((section) => (
+                    <Section key={section.heading} section={section} />
+                  ))}
+                </div>
+              </div>
+            </article>
+
+            <footer className="mt-8 flex flex-col items-start gap-3 px-1 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-se-text-muted">
+                มีคำถามเกี่ยวกับเอกสารเหล่านี้?{' '}
+                <Link to="/support" className={`${linkClass} text-se-primary hover:underline`}>
+                  ติดต่อทีมงาน
+                </Link>
+              </p>
+              <Link
+                to="/"
+                className={`${linkClass} text-se-text-muted transition-colors hover:text-se-text-main`}
+              >
+                &larr; กลับสู่หน้าหลัก
+              </Link>
+            </footer>
           </div>
-        </aside>
-
-        {/* Right Content Area */}
-        <article className="flex-1 bg-white border border-gray-200 rounded-[32px] p-8 md:p-12 shadow-sm min-h-[600px]">
-          
-          {/* ======================================= */}
-          {/* 1. Privacy Policy */}
-          {/* ======================================= */}
-          {activeTab === 'privacy' && (
-            <div className="animate-in fade-in duration-500">
-              <h1 className="text-3xl font-black tracking-tight mb-2">Privacy Policy</h1>
-              <p className="text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">นโยบายความเป็นส่วนตัว • อัปเดตล่าสุด: ตุลาคม 2026</p>
-              
-              <div className="space-y-6 text-gray-600 text-sm leading-relaxed font-medium">
-                <p>
-                  แพลตฟอร์ม SE-ONE และระบบภายใน (รวมถึง SE-CONSOLE) ให้ความสำคัญกับการคุ้มครองข้อมูลส่วนบุคคลของคุณ นโยบายนี้อธิบายถึงวิธีการที่เรารวบรวม ใช้งาน และปกป้องข้อมูลของคุณเมื่อคุณใช้บริการของเรา
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">1. ข้อมูลที่เราเก็บรวบรวม</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li><strong>ข้อมูลบัญชี:</strong> ชื่อ, นามสกุล, ชื่อเล่น, รหัสนักศึกษา, อีเมล, และรหัสผ่าน</li>
-                  <li><strong>ข้อมูลการศึกษา:</strong> ชั้นปี, กลุ่มเรียน (SEC), คะแนน (XP), ประวัติการส่งงาน</li>
-                  <li><strong>ข้อมูลการติดต่อ (ทางเลือก):</strong> เบอร์โทรศัพท์, Facebook, Instagram, GitHub</li>
-                </ul>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">2. วิธีการใช้ข้อมูลของคุณ</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>เพื่อสร้างและจัดการบัญชีผู้ใช้สำหรับการเรียนการสอน</li>
-                  <li>เพื่อติดตามประเมินผลการเรียนและการส่งงานผ่าน SE-CONSOLE</li>
-                  <li>เพื่ออำนวยความสะดวกในการติดต่อสื่อสารระหว่างนักศึกษาและผู้สอน (ผ่านฟีเจอร์ Contacts)</li>
-                </ul>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">3. การรักษาความปลอดภัย</h3>
-                <p>
-                  เราใช้มาตรฐานการรักษาความปลอดภัยทางเทคนิค (เช่น การเข้ารหัสฐานข้อมูลผ่าน Supabase Row Level Security) เพื่อป้องกันการเข้าถึง การแก้ไข หรือการเปิดเผยข้อมูลของคุณโดยไม่ได้รับอนุญาต
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ======================================= */}
-          {/* 2. PDPA */}
-          {/* ======================================= */}
-          {activeTab === 'pdpa' && (
-            <div className="animate-in fade-in duration-500">
-              <h1 className="text-3xl font-black tracking-tight mb-2">PDPA Compliance</h1>
-              <p className="text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">นโยบายคุ้มครองข้อมูลส่วนบุคคลตามกฎหมาย PDPA • อัปเดตล่าสุด: ตุลาคม 2026</p>
-              
-              <div className="space-y-6 text-gray-600 text-sm leading-relaxed font-medium">
-                <p>
-                  ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ของประเทศไทย SE-ONE เคารพสิทธิในฐานะเจ้าของข้อมูลส่วนบุคคลของคุณ และมุ่งมั่นที่จะดำเนินการตามกฎหมายอย่างเคร่งครัด
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">สิทธิของเจ้าของข้อมูลส่วนบุคคล (Data Subject Rights)</h3>
-                <ul className="list-decimal pl-5 space-y-3">
-                  <li><strong>สิทธิในการเข้าถึงข้อมูล:</strong> คุณสามารถเข้าถึงและดูข้อมูลส่วนบุคคลของคุณได้ผ่านเมนู "My Profile"</li>
-                  <li><strong>สิทธิในการแก้ไขข้อมูล:</strong> คุณมีสิทธิแก้ไขข้อมูลส่วนบุคคลให้ถูกต้อง เป็นปัจจุบัน และสมบูรณ์</li>
-                  <li><strong>สิทธิในการขอให้ลบข้อมูล (Right to be forgotten):</strong> คุณสามารถร้องขอให้ผู้ดูแลระบบ (Admin/Manager) ลบบัญชีและข้อมูลส่วนบุคคลของคุณออกจากระบบได้เมื่อสิ้นสุดสถานะการเป็นนักศึกษา</li>
-                  <li><strong>สิทธิในการเพิกถอนความยินยอม:</strong> คุณสามารถยกเลิกการให้ข้อมูลทางสังคม (Social Media) หรือเบอร์โทรศัพท์ได้ตลอดเวลาโดยการลบออกจากโปรไฟล์ตนเอง</li>
-                </ul>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">การเปิดเผยข้อมูลต่อบุคคลที่สาม</h3>
-                <p>
-                  เราจะไม่มีการนำข้อมูลส่วนบุคคลของคุณไปขาย แลกเปลี่ยน หรือเปิดเผยต่อบุคคลภายนอกโดยเด็ดขาด ข้อมูลในสมุดรายชื่อ (Contacts) จะถูกจำกัดให้เห็นได้เฉพาะสมาชิกที่เข้าสู่ระบบและอยู่ภายใต้ระบบ SE-ONE เท่านั้น
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ======================================= */}
-          {/* 3. Terms of Use */}
-          {/* ======================================= */}
-          {activeTab === 'terms' && (
-            <div className="animate-in fade-in duration-500">
-              <h1 className="text-3xl font-black tracking-tight mb-2">Terms of Use</h1>
-              <p className="text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">ข้อตกลงและเงื่อนไขการใช้งาน • อัปเดตล่าสุด: ตุลาคม 2026</p>
-              
-              <div className="space-y-6 text-gray-600 text-sm leading-relaxed font-medium">
-                <p>
-                  การเข้าถึงและใช้งานระบบ SE-ONE, SE-CONSOLE, CODING STUDIO หรือบริการอื่นๆ ในเครือ (รวมเรียกว่า "บริการ") ถือว่าคุณยอมรับข้อตกลงการใช้งานเหล่านี้
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">1. บัญชีผู้ใช้และความปลอดภัย</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>คุณต้องรักษาความลับของรหัสผ่านบัญชีของคุณ หากพบการใช้งานที่ผิดปกติ คุณต้องแจ้งให้ผู้ดูแลระบบทราบทันที</li>
-                  <li>ระบบถูกสงวนสิทธิ์ไว้สำหรับนักศึกษาและบุคลากรที่เกี่ยวข้องเท่านั้น ไม่อนุญาตให้โอนสิทธิ์การใช้งานบัญชีให้บุคคลภายนอก</li>
-                </ul>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">2. พฤติกรรมที่ยอมรับได้ (Code of Conduct)</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  <li>คุณตกลงที่จะใช้บริการเพื่อการศึกษาเท่านั้น</li>
-                  <li>ห้ามอัปโหลดไฟล์ที่มีไวรัส สคริปต์ประสงค์ร้าย หรือเนื้อหาที่ผิดกฎหมาย/ละเมิดลิขสิทธิ์ลงในระบบ</li>
-                  <li>การทุจริตในการส่งงานผ่านระบบ หรือพยายามเข้าถึงสิทธิ์ผู้ดูแลระบบโดยไม่ได้รับอนุญาต จะมีบทลงโทษทางวิชาการและอาจถูกระงับบัญชีถาวร</li>
-                </ul>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">3. การแก้ไขข้อตกลง</h3>
-                <p>
-                  SE-ONE ขอสงวนสิทธิ์ในการปรับปรุง เปลี่ยนแปลง หรือแก้ไขข้อตกลงนี้ได้ทุกเมื่อ โดยจะมีการประกาศแจ้งให้ทราบในหน้าระบบ
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ======================================= */}
-          {/* 4. License Agreement */}
-          {/* ======================================= */}
-          {activeTab === 'license' && (
-            <div className="animate-in fade-in duration-500">
-              <h1 className="text-3xl font-black tracking-tight mb-2">License Agreement</h1>
-              <p className="text-gray-500 font-medium mb-8 pb-8 border-b border-gray-100">ข้อตกลงอนุญาตให้ใช้สิทธิซอฟต์แวร์ (EULA) • อัปเดตล่าสุด: ตุลาคม 2026</p>
-              
-              <div className="space-y-6 text-gray-600 text-sm leading-relaxed font-medium">
-                <p>
-                  ข้อตกลงฉบับนี้เป็นสัญญาระหว่างคุณ (ผู้ใช้งาน) และ InfiniteStack Corp. / ทีมผู้พัฒนาแพลตฟอร์ม SE-ONE
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">1. การอนุญาตให้ใช้สิทธิ</h3>
-                <p>
-                  เรามอบสิทธิ์แบบไม่ผูกขาด (Non-exclusive) และไม่สามารถโอนได้ (Non-transferable) ในการเข้าถึงและใช้งานซอฟต์แวร์ผ่านเว็บเบราว์เซอร์ เพื่อวัตถุประสงค์ในการศึกษาและจัดการงานภายในองค์กร/สาขาวิชาเท่านั้น
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">2. ทรัพย์สินทางปัญญา</h3>
-                <p>
-                  ซอร์สโค้ด (Source Code), การออกแบบ UI/UX, โลโก้, กราฟิก, และโครงสร้างฐานข้อมูลของระบบ ถือเป็นทรัพย์สินทางปัญญาของ InfiniteStack Corp. ไม่อนุญาตให้คัดลอก ทำซ้ำ ดัดแปลง หรือทำวิศวกรรมย้อนกลับ (Reverse Engineer) โดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร
-                </p>
-                <h3 className="text-lg font-bold text-gray-900 pt-4">3. ข้อจำกัดความรับผิดชอบ (Disclaimer)</h3>
-                <p>
-                  ซอฟต์แวร์นี้ให้บริการในลักษณะ "ตามที่เป็นอยู่" (As is) โดยไม่มีการรับประกันใดๆ ทั้งสิ้น ทีมผู้พัฒนาจะไม่รับผิดชอบต่อความสูญเสียของข้อมูล หรือความเสียหายที่เกิดจากการใช้งานระบบขัดข้อง 
-                </p>
-              </div>
-            </div>
-          )}
-
-        </article>
+        </div>
       </main>
-
     </div>
   )
 }

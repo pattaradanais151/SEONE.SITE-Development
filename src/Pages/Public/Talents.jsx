@@ -7,7 +7,7 @@ const ROLE_FIELD = 'role'
 
 // กำหนดป้ายตายตัวรายบุคคล (key = GitHub username ตัวพิมพ์เล็ก)
 const ROLE_OVERRIDES = {
-  pattaradanais151: 'FULLSTACK DEVELOPER',
+  pattaradanais151: 'FULLSTACK',
 }
 
 const DEFAULT_BIO = 'Software Engineering Student @ RMUTL'
@@ -64,29 +64,36 @@ async function fetchGithub(username) {
 function Avatar({ src, fallback, alt }) {
   const [failed, setFailed] = useState(false)
   return (
-    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-[20px] bg-gradient-to-br from-[#e8f1ff] to-[#f0ecff] text-[28px] font-semibold text-[#0071e3] ring-1 ring-black/[0.06]">
-      {src && !failed ? (
-        <img
-          src={src}
-          alt={alt}
-          draggable={false}
-          onError={() => setFailed(true)}
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        fallback
-      )}
+    <div className="relative mx-auto h-[96px] w-[96px]">
+      {/* gradient ring */}
+      <div
+        aria-hidden
+        className="absolute -inset-[3px] rounded-full bg-gradient-to-br from-[#5ab0ff] via-[#8b5cf6] to-[#ff7a4d] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+      />
+      <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#f0ecff] text-[34px] font-semibold text-[#0071e3] shadow-[0_10px_28px_-8px_rgba(0,0,0,0.25)] ring-4 ring-white">
+        {src && !failed ? (
+          <img
+            src={src}
+            alt={alt}
+            draggable={false}
+            onError={() => setFailed(true)}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          fallback
+        )}
+      </div>
     </div>
   )
 }
 
 function Stat({ label, value }) {
   return (
-    <div className="flex flex-col items-center gap-1 px-1">
-      <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#86868b]">{label}</span>
-      <span className="text-[17px] font-semibold tabular-nums">
-        {value === undefined ? <span className="inline-block h-4 w-6 animate-pulse rounded bg-black/[0.08]" /> : value ?? '–'}
+    <div className="flex flex-col items-center gap-0.5 px-1">
+      <span className="text-[19px] font-semibold tabular-nums tracking-[-0.02em]">
+        {value === undefined ? <span className="inline-block h-5 w-7 animate-pulse rounded bg-black/[0.08]" /> : value ?? '–'}
       </span>
+      <span className="text-[12px] text-[#86868b]">{label}</span>
     </div>
   )
 }
@@ -94,14 +101,12 @@ function Stat({ label, value }) {
 function SkeletonCard() {
   return (
     <div className="rounded-[28px] bg-white p-6 ring-1 ring-black/[0.04]">
-      <div className="flex justify-between">
-        <div className="h-20 w-20 animate-pulse rounded-[20px] bg-black/[0.06]" />
-        <div className="h-5 w-16 animate-pulse rounded-full bg-black/[0.06]" />
-      </div>
-      <div className="mt-5 h-5 w-2/3 animate-pulse rounded bg-black/[0.06]" />
-      <div className="mt-2 h-3 w-1/3 animate-pulse rounded bg-black/[0.06]" />
-      <div className="mt-4 h-4 w-full animate-pulse rounded bg-black/[0.06]" />
-      <div className="mt-6 h-12 w-full animate-pulse rounded-full bg-black/[0.06]" />
+      <div className="mx-auto h-[96px] w-[96px] animate-pulse rounded-full bg-black/[0.06]" />
+      <div className="mx-auto mt-6 h-5 w-2/3 animate-pulse rounded bg-black/[0.06]" />
+      <div className="mx-auto mt-2 h-3 w-1/3 animate-pulse rounded bg-black/[0.06]" />
+      <div className="mx-auto mt-5 h-4 w-full animate-pulse rounded bg-black/[0.06]" />
+      <div className="mt-7 h-12 w-full animate-pulse rounded-2xl bg-black/[0.06]" />
+      <div className="mt-5 h-11 w-full animate-pulse rounded-full bg-black/[0.06]" />
     </div>
   )
 }
@@ -201,42 +206,56 @@ export default function Talents() {
   }, [cards, query])
 
   return (
-    <div className="w-full flex-grow bg-[#f5f5f7]">
+    <div className="w-full flex-grow bg-[#f5f5f7] text-[#1d1d1f]">
       <style>{`
+        @keyframes se-hero { from { opacity: 0; transform: translateY(22px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
         @keyframes se-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes se-float { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(0,-24px,0) scale(1.06); } }
+        .se-hero { opacity: 0; animation: se-hero 1s cubic-bezier(.28,.11,.32,1) forwards; }
         .se-rise { opacity: 0; animation: se-rise .8s cubic-bezier(.28,.11,.32,1) forwards; }
-        @media (prefers-reduced-motion: reduce) { .se-rise { animation: none; opacity: 1; } }
+        .se-float { animation: se-float 14s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) {
+          .se-hero, .se-rise { animation: none; opacity: 1; }
+          .se-float { animation: none; }
+        }
       `}</style>
 
-      {/* Hero */}
-      <section className="bg-[#fbfbfd]">
-        <div className="mx-auto max-w-[1024px] px-5 pb-14 pt-20 text-center md:pb-20 md:pt-28">
-          <p className="se-rise mb-4 text-[17px] font-semibold text-[#6e6e73] md:text-[21px]">Talents</p>
+      {/* ============================ HERO ============================ */}
+      <section className="relative overflow-hidden bg-[#fbfbfd]">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="se-float absolute -left-24 top-0 h-[320px] w-[320px] rounded-full bg-[#7dbdff]/40 blur-[90px]" />
+          <div className="se-float absolute -right-20 top-16 h-[340px] w-[340px] rounded-full bg-[#c4a6ff]/40 blur-[100px]" style={{ animationDelay: '-6s' }} />
+          <div className="se-float absolute bottom-0 left-1/2 h-[240px] w-[380px] -translate-x-1/2 rounded-full bg-[#ffc2a8]/30 blur-[100px]" style={{ animationDelay: '-10s' }} />
+        </div>
+
+        <div className="relative mx-auto max-w-[1024px] px-5 pb-16 pt-20 text-center md:pb-24 md:pt-32">
+          <p className="se-hero text-[17px] font-semibold text-[#6e6e73] md:text-[21px]">Talents</p>
           <h1
-            className="se-rise text-[44px] font-semibold leading-[1.08] tracking-[-0.04em] sm:text-[64px] md:text-[80px]"
-            style={{ animationDelay: '80ms' }}
+            className="se-hero mt-3 text-[48px] font-semibold leading-[1.05] tracking-[-0.045em] sm:text-[72px] md:text-[96px]"
+            style={{ animationDelay: '100ms' }}
           >
             Our{' '}
-            <span className="bg-gradient-to-r from-[#0071e3] to-[#5e5ce6] bg-clip-text text-transparent">Talents</span>
+            <span className="bg-gradient-to-r from-[#0071e3] via-[#5e5ce6] to-[#bf5af2] bg-clip-text text-transparent">Talents.</span>
           </h1>
           <p
-            className="se-rise mx-auto mt-5 max-w-[640px] text-[19px] font-medium leading-[1.5] tracking-[-0.01em] text-[#6e6e73] md:text-[24px]"
-            style={{ animationDelay: '160ms' }}
+            className="se-hero mx-auto mt-6 max-w-[620px] text-[19px] font-medium leading-[1.55] tracking-[-0.01em] text-[#6e6e73] md:text-[24px]"
+            style={{ animationDelay: '220ms' }}
           >
             ทำความรู้จักกับสมาชิกวิศวกรรมซอฟต์แวร์ RMUTL 69 รุ่นที่ 4
           </p>
 
           {/* Search */}
-          <div className="se-rise mx-auto mt-9 max-w-[420px]" style={{ animationDelay: '240ms' }}>
+          <div className="se-hero mx-auto mt-10 max-w-[460px]" style={{ animationDelay: '340ms' }}>
             <label className="relative block">
               <span className="sr-only">ค้นหาสมาชิก</span>
               <svg
-                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#86868b]"
+                className="pointer-events-none absolute left-5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-[#86868b]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 strokeWidth="2"
                 strokeLinecap="round"
+                aria-hidden
               >
                 <circle cx="11" cy="11" r="7" />
                 <path d="M20 20l-3.5-3.5" />
@@ -246,14 +265,15 @@ export default function Talents() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="ค้นหาชื่อ, GitHub หรือสายงาน"
-                className="h-11 w-full rounded-full bg-[#f5f5f7] pl-11 pr-4 text-[15px] outline-none ring-1 ring-black/[0.06] transition focus:bg-white focus:ring-2 focus:ring-[#0071e3]"
+                className="h-[52px] w-full rounded-full bg-white/80 pl-12 pr-5 text-[17px] text-[#1d1d1f] placeholder:text-[#a1a1a6] outline-none ring-1 ring-black/[0.08] shadow-[0_10px_30px_-14px_rgba(0,0,0,0.25)] backdrop-blur-xl transition duration-200 focus:bg-white focus:ring-2 focus:ring-[#0071e3] [&::-webkit-search-cancel-button]:cursor-pointer"
               />
             </label>
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1200px] px-5 py-12 md:py-16">
+      {/* ============================ CONTENT ============================ */}
+      <div className="mx-auto max-w-[1200px] px-5 py-12 md:py-20">
         {/* Loading */}
         {loading && (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -265,13 +285,18 @@ export default function Talents() {
 
         {/* Error */}
         {!loading && error && (
-          <div className="mx-auto max-w-[520px] rounded-[28px] bg-white px-8 py-14 text-center ring-1 ring-black/[0.04]">
-            <h3 className="text-[21px] font-semibold tracking-[-0.02em]">โหลดข้อมูลไม่สำเร็จ</h3>
-            <p className="mt-2 text-[15px] text-[#6e6e73]">{error}</p>
+          <div role="alert" className="mx-auto max-w-[520px] rounded-[32px] bg-white px-8 py-14 text-center shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] ring-1 ring-black/[0.04]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#ff3b30]/10">
+              <svg className="h-7 w-7 text-[#d70015]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M12 8v5m0 3.5h.01M10.3 3.9L2.4 17.6A2 2 0 004.1 20.6h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" />
+              </svg>
+            </div>
+            <h3 className="mt-6 text-[24px] font-semibold tracking-[-0.025em]">โหลดข้อมูลไม่สำเร็จ</h3>
+            <p className="mt-2 text-[16px] text-[#6e6e73]">{error}</p>
             <button
               type="button"
               onClick={() => setReloadKey((k) => k + 1)}
-              className="mt-6 rounded-full bg-[#0071e3] px-6 py-2.5 text-[15px] text-white transition-colors hover:bg-[#0077ed]"
+              className="mt-7 rounded-full bg-[#0071e3] px-7 py-3 text-[16px] font-medium text-white shadow-[0_10px_24px_-10px_rgba(0,113,227,0.7)] transition hover:bg-[#0077ed] active:scale-[0.98] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/40"
             >
               ลองใหม่อีกครั้ง
             </button>
@@ -280,45 +305,67 @@ export default function Talents() {
 
         {/* Empty */}
         {!loading && !error && talents.length === 0 && (
-          <div className="mx-auto max-w-[520px] rounded-[28px] bg-white px-8 py-14 text-center ring-1 ring-black/[0.04]">
-            <h3 className="text-[21px] font-semibold tracking-[-0.02em]">ยังไม่มีข้อมูลสมาชิก</h3>
-            <p className="mt-2 text-[15px] text-[#6e6e73]">ข้อมูลโปรไฟล์จะปรากฏที่นี่เมื่อมีผู้สมัครสมาชิกเข้าสู่ระบบ</p>
+          <div className="mx-auto max-w-[520px] rounded-[32px] bg-white px-8 py-14 text-center shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] ring-1 ring-black/[0.04]">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#c4a6ff] to-[#7c3aed] shadow-[0_8px_20px_rgba(124,58,237,0.3)]">
+              <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M17 20h5v-2a4 4 0 00-5.356-3.772M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a4 4 0 015.356-3.772M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h3 className="mt-6 text-[24px] font-semibold tracking-[-0.025em]">ยังไม่มีข้อมูลสมาชิก</h3>
+            <p className="mt-2 text-[16px] leading-[1.6] text-[#6e6e73]">ข้อมูลโปรไฟล์จะปรากฏที่นี่เมื่อมีผู้สมัครสมาชิกเข้าสู่ระบบ</p>
           </div>
         )}
 
         {/* No search result */}
         {!loading && !error && talents.length > 0 && visible.length === 0 && (
-          <p className="py-16 text-center text-[17px] text-[#6e6e73]">ไม่พบสมาชิกที่ตรงกับ “{query}”</p>
+          <div className="py-16 text-center">
+            <p className="text-[24px] font-semibold tracking-[-0.025em]">ไม่พบสมาชิกที่ตรงกับ “{query}”</p>
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="mt-4 rounded-full px-4 py-2 text-[17px] text-[#0066cc] underline-offset-4 hover:underline focus:outline-none focus-visible:ring-4 focus-visible:ring-[#0071e3]/30"
+            >
+              ล้างการค้นหา <span aria-hidden>›</span>
+            </button>
+          </div>
         )}
 
         {/* Grid */}
         {!loading && !error && visible.length > 0 && (
           <>
-            <p className="mb-5 text-[13px] font-medium text-[#6e6e73]">{visible.length} สมาชิก</p>
+            <p className="mb-6 text-[15px] font-medium text-[#6e6e73]">
+              <span className="font-semibold text-[#1d1d1f]">{visible.length}</span> สมาชิก
+              {query.trim() && talents.length !== visible.length && <span> จากทั้งหมด {talents.length}</span>}
+            </p>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {visible.map((c, i) => (
                 <article
                   key={c.id}
-                  className="se-rise flex flex-col rounded-[28px] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.04] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.10)]"
+                  className="se-rise group relative flex flex-col overflow-hidden rounded-[28px] bg-white p-6 pt-8 text-center shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.04] transition-all duration-700 ease-[cubic-bezier(.28,.11,.32,1)] hover:-translate-y-1.5 hover:shadow-[0_24px_60px_-20px_rgba(0,0,0,0.25)]"
                   style={{ animationDelay: `${Math.min(i, 11) * 45}ms` }}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <Avatar src={c.avatar} fallback={c.initial} alt={`${c.name} profile`} />
-                    {c.tag && (
-                      <span className="whitespace-nowrap rounded-full bg-[#0071e3]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#0071e3]">
-                        {c.tag}
-                      </span>
-                    )}
-                  </div>
+                  {/* soft glow behind avatar */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute left-1/2 top-0 h-[140px] w-[220px] -translate-x-1/2 rounded-full bg-gradient-to-br from-[#7dbdff]/30 to-[#c4a6ff]/30 blur-3xl transition-opacity duration-700 group-hover:opacity-100 md:opacity-60"
+                  />
 
-                  <h3 className="mt-5 truncate text-[20px] font-semibold tracking-[-0.02em]">{c.name}</h3>
-                  {c.username && (
-                    <p className="mt-0.5 truncate font-mono text-[11px] text-[#86868b]">@{c.username}</p>
+                  {c.tag && (
+                    <span className="absolute right-4 top-4 max-w-[60%] truncate whitespace-nowrap rounded-full bg-[#0071e3]/10 px-3 py-1 text-[11px] font-semibold text-[#0071e3]">
+                      {c.tag}
+                    </span>
                   )}
 
-                  <p className="mt-3 line-clamp-2 min-h-[44px] text-[14px] leading-[1.55] text-[#6e6e73]">{c.bio}</p>
+                  <div className="relative">
+                    <Avatar src={c.avatar} fallback={c.initial} alt={`${c.name} profile`} />
+                  </div>
 
-                  <div className="mt-5 grid grid-cols-3 divide-x divide-black/[0.06] border-t border-black/[0.06] pt-4">
+                  <h3 className="relative mt-6 truncate text-[21px] font-semibold tracking-[-0.025em]">{c.name}</h3>
+                  {c.username && <p className="relative mt-0.5 truncate text-[14px] text-[#86868b]">@{c.username}</p>}
+
+                  <p className="relative mx-auto mt-3 line-clamp-2 min-h-[46px] max-w-[260px] text-[14px] leading-[1.6] text-[#6e6e73]">{c.bio}</p>
+
+                  <div className="relative mt-5 grid grid-cols-3 divide-x divide-black/[0.06] rounded-[18px] bg-[#f5f5f7] py-3.5">
                     <Stat label="Repos" value={c.stats === undefined ? undefined : c.stats?.repos} />
                     <Stat label="Followers" value={c.stats === undefined ? undefined : c.stats?.followers} />
                     <Stat label="Following" value={c.stats === undefined ? undefined : c.stats?.following} />
@@ -329,7 +376,7 @@ export default function Talents() {
                       href={`https://github.com/${c.username}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] text-[14px] font-medium text-white transition-colors hover:bg-black"
+                      className="relative mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#1d1d1f] text-[15px] font-medium text-white transition duration-200 hover:bg-black active:scale-[0.98] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#1d1d1f]/30"
                     >
                       <GithubIcon />
                       ดูผลงานบน GitHub
@@ -338,7 +385,7 @@ export default function Talents() {
                     <button
                       type="button"
                       disabled
-                      className="mt-5 inline-flex h-11 w-full cursor-not-allowed items-center justify-center rounded-full bg-[#f5f5f7] text-[14px] font-medium text-[#86868b]"
+                      className="relative mt-5 inline-flex h-11 w-full cursor-not-allowed items-center justify-center rounded-full bg-[#f5f5f7] text-[15px] font-medium text-[#86868b]"
                     >
                       ยังไม่ได้เชื่อม GitHub
                     </button>

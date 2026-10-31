@@ -12,6 +12,9 @@ const LANG_KEY = 'se-lang'
 const TH_TZ = 'Asia/Bangkok'
 const NOTIF_LIMIT = 30
 
+// ชื่อที่แสดงใน Footer (Copyright © ปี ชื่อ) — แก้ตรงนี้ที่เดียว
+const COPYRIGHT_HOLDER = 'SEONE.SITE'
+
 // เวลา/วันที่ประเทศไทย — fix timezone เป็น Asia/Bangkok ไม่ขึ้นกับเครื่องผู้ใช้
 const TIME_FMT = new Intl.DateTimeFormat('th-TH', {
   timeZone: TH_TZ,
@@ -38,7 +41,11 @@ const DATE_FMT = {
 }
 const LOCALE = { th: 'th-TH', en: 'en-US' }
 
-/* ---------- i18n (Sidebar + Header) ---------- */
+// ปี ค.ศ. ปัจจุบัน (เวลาไทย) สำหรับ Footer
+const getCurrentYear = () =>
+  new Intl.DateTimeFormat('en-US', { timeZone: TH_TZ, year: 'numeric' }).format(new Date())
+
+/* ---------- i18n (Sidebar + Header + Footer) ---------- */
 const I18N = {
   th: {
     clockLabel: 'วันและเวลาประเทศไทย',
@@ -52,19 +59,28 @@ const I18N = {
     themeTipBody: 'อยู่ในช่วงทดสอบ บางหน้าอาจยังแสดงผลสีไม่สมบูรณ์',
     languageLabel: 'ภาษา',
     mainMenu: 'เมนูหลัก',
+    workspace: 'พื้นที่ทำงาน',
     collapse: 'ย่อแถบเมนู',
     expand: 'ขยายแถบเมนู',
     profileImageAlt: 'รูปโปรไฟล์',
     userFallback: 'ผู้ใช้',
     myProfile: 'โปรไฟล์ของฉัน',
     logout: 'ออกจากระบบ',
+    footer: {
+      tagline: 'ระบบจัดการ SEWORK',
+      rights: 'สงวนลิขสิทธิ์',
+      madeIn: 'พัฒนาในประเทศไทย',
+    },
     notif: {
       title: 'การแจ้งเตือน',
       bell: (n) => (n > 0 ? `การแจ้งเตือน (ยังไม่ได้อ่าน ${n} รายการ)` : 'การแจ้งเตือน'),
       markAll: 'อ่านทั้งหมดแล้ว',
+      clearAll: 'ลบทั้งหมด',
+      clearConfirm: 'ยืนยันลบทั้งหมด?',
+      remove: 'ลบการแจ้งเตือนนี้',
       empty: 'ยังไม่มีการแจ้งเตือน',
       emptyHint: 'เมื่อมีความเคลื่อนไหวใหม่ ระบบจะแจ้งที่นี่',
-      loadError: 'โหลดการแจ้งเตือนไม่สำเร็จ',
+      loadError: 'อยู่ระหว่างการปรับปรุง',
       retry: 'ลองใหม่',
     },
     nav: {
@@ -99,19 +115,28 @@ const I18N = {
     themeTipBody: 'Currently in testing. Some pages may not display colors correctly yet.',
     languageLabel: 'Language',
     mainMenu: 'Main menu',
+    workspace: 'Workspace',
     collapse: 'Collapse sidebar',
     expand: 'Expand sidebar',
     profileImageAlt: 'Profile',
     userFallback: 'User',
     myProfile: 'My Profile',
     logout: 'Log Out',
+    footer: {
+      tagline: 'SEWORK Management System',
+      rights: 'All rights reserved.',
+      madeIn: 'Made in Thailand',
+    },
     notif: {
       title: 'Notifications',
       bell: (n) => (n > 0 ? `Notifications (${n} unread)` : 'Notifications'),
       markAll: 'Mark all as read',
+      clearAll: 'Clear all',
+      clearConfirm: 'Clear everything?',
+      remove: 'Delete this notification',
       empty: 'No notifications yet',
       emptyHint: "We'll let you know here when something new happens.",
-      loadError: "Couldn't load notifications",
+      loadError: "Currently under improvement",
       retry: 'Retry',
     },
     nav: {
@@ -155,6 +180,16 @@ const ICONS = {
   globe:
     'M21 12a9 9 0 11-18 0 9 9 0 0118 0zM3 12h18M12 3a13.5 13.5 0 013.5 9A13.5 13.5 0 0112 21a13.5 13.5 0 01-3.5-9A13.5 13.5 0 0112 3z',
   check: 'M5 13l4 4L19 7',
+  trash:
+    'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16',
+}
+
+// สีพื้นหลังของไอคอนเมนูหลัก (สไตล์ iOS Settings) — ใช้ได้ทั้ง Light / Dark
+const NAV_TONE = {
+  home: 'bg-blue-500',
+  academic: 'bg-orange-500',
+  community: 'bg-emerald-500',
+  admin: 'bg-violet-500',
 }
 
 const ring = 'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-se-primary/30'
@@ -173,6 +208,17 @@ function Icon({ d, className = 'h-5 w-5', strokeWidth = 1.75 }) {
     >
       <path d={d} />
     </svg>
+  )
+}
+
+// ไอคอนเมนูหลักแบบกล่องมุมมน มีสีประจำกลุ่ม
+function NavIcon({ d, tone }) {
+  return (
+    <span
+      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[8px] text-white shadow-[inset_0_0_0_0.5px_rgba(255,255,255,0.28),0_1px_2px_rgba(0,0,0,0.2)] ${tone}`}
+    >
+      <Icon d={d} className="h-[17px] w-[17px]" strokeWidth={2} />
+    </span>
   )
 }
 
@@ -292,6 +338,7 @@ function PublicIp({ t }) {
 /*  NotificationBell — การแจ้งเตือนจริงจาก Supabase (ตาราง notifications) */
 /*  - โหลด 30 รายการล่าสุดของผู้ใช้ + อัปเดตแบบ Realtime                  */
 /*  - แสดงจำนวนที่ยังไม่ได้อ่าน, คลิกเพื่ออ่าน/ไปยังลิงก์, อ่านทั้งหมด       */
+/*  - ลบทีละรายการ (ปุ่มถังขยะ) / ลบทั้งหมด (กดยืนยัน 2 ขั้น)              */
 /* ------------------------------------------------------------------ */
 
 function NotificationBell({ userId, lang, t }) {
@@ -299,8 +346,10 @@ function NotificationBell({ userId, lang, t }) {
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState([])
   const [status, setStatus] = useState('loading') // loading | ready | error
+  const [confirmClear, setConfirmClear] = useState(false)
   const wrapRef = useRef(null)
   const alive = useRef(true)
+  const clearTimer = useRef()
   const n = t.notif
 
   const unread = useMemo(() => items.filter((x) => !x.is_read).length, [items])
@@ -380,6 +429,16 @@ function NotificationBell({ userId, lang, t }) {
     }
   }, [open])
 
+  // ปิด dropdown แล้วยกเลิกสถานะ "ยืนยันลบทั้งหมด"
+  useEffect(() => {
+    if (!open) {
+      clearTimeout(clearTimer.current)
+      setConfirmClear(false)
+    }
+  }, [open])
+
+  useEffect(() => () => clearTimeout(clearTimer.current), [])
+
   const markRead = async (id) => {
     setItems((prev) => prev.map((x) => (x.id === id ? { ...x, is_read: true } : x)))
     const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', id)
@@ -399,6 +458,35 @@ function NotificationBell({ userId, lang, t }) {
       .eq('is_read', false)
     if (error) {
       console.error('Mark all read error:', error.message)
+      load()
+    }
+  }
+
+  // ลบทีละรายการ — ลบจากหน้าจอทันที ถ้าฐานข้อมูลลบไม่สำเร็จจะโหลดใหม่
+  const removeOne = async (id) => {
+    setItems((prev) => prev.filter((x) => x.id !== id))
+    const { error } = await supabase.from('notifications').delete().eq('id', id)
+    if (error) {
+      console.error('Delete notification error:', error.message)
+      load()
+    }
+  }
+
+  // ลบทั้งหมดของผู้ใช้ — กดครั้งแรกเพื่อยืนยัน (3 วินาที) กดครั้งที่สองเพื่อลบจริง
+  const clearAll = async () => {
+    if (!userId || items.length === 0) return
+    if (!confirmClear) {
+      setConfirmClear(true)
+      clearTimeout(clearTimer.current)
+      clearTimer.current = setTimeout(() => setConfirmClear(false), 3000)
+      return
+    }
+    clearTimeout(clearTimer.current)
+    setConfirmClear(false)
+    setItems([])
+    const { error } = await supabase.from('notifications').delete().eq('user_id', userId)
+    if (error) {
+      console.error('Clear notifications error:', error.message)
       load()
     }
   }
@@ -440,18 +528,34 @@ function NotificationBell({ userId, lang, t }) {
           open ? 'visible scale-100 opacity-100' : 'invisible scale-95 opacity-0'
         }`}
       >
-        <div className="flex items-center justify-between border-b border-se-border/60 px-4 py-3">
+        <div className="flex items-center justify-between gap-2 border-b border-se-border/60 px-4 py-3">
           <p className="text-[15px] font-semibold">{n.title}</p>
-          <button
-            type="button"
-            onClick={markAllRead}
-            disabled={unread === 0}
-            tabIndex={open ? 0 : -1}
-            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[12px] font-medium text-se-primary transition-colors hover:bg-se-primary/10 disabled:cursor-default disabled:text-se-text-muted disabled:opacity-60 disabled:hover:bg-transparent ${ring}`}
-          >
-            <Icon d={ICONS.check} strokeWidth={2.2} className="h-3.5 w-3.5" />
-            {n.markAll}
-          </button>
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              onClick={markAllRead}
+              disabled={unread === 0}
+              tabIndex={open ? 0 : -1}
+              className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1 text-[12px] font-medium text-se-primary transition-colors hover:bg-se-primary/10 disabled:cursor-default disabled:text-se-text-muted disabled:opacity-60 disabled:hover:bg-transparent ${ring}`}
+            >
+              <Icon d={ICONS.check} strokeWidth={2.2} className="h-3.5 w-3.5" />
+              {n.markAll}
+            </button>
+            <button
+              type="button"
+              onClick={clearAll}
+              disabled={items.length === 0}
+              tabIndex={open ? 0 : -1}
+              className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1 text-[12px] font-medium transition-colors disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent ${ring} ${
+                confirmClear
+                  ? 'bg-se-danger/10 text-se-danger'
+                  : 'text-se-text-muted hover:bg-se-danger/10 hover:text-se-danger'
+              }`}
+            >
+              <Icon d={ICONS.trash} strokeWidth={2} className="h-3.5 w-3.5" />
+              {confirmClear ? n.clearConfirm : n.clearAll}
+            </button>
+          </div>
         </div>
 
         <div className="custom-scrollbar max-h-[min(420px,70vh)] overflow-y-auto p-1.5">
@@ -493,12 +597,12 @@ function NotificationBell({ userId, lang, t }) {
           ) : (
             <ul>
               {items.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className="group relative">
                   <button
                     type="button"
                     tabIndex={open ? 0 : -1}
                     onClick={() => openItem(item)}
-                    className={`flex w-full gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-se-border/30 ${ring}`}
+                    className={`flex w-full gap-3 rounded-xl py-2.5 pl-3 pr-11 text-left transition-colors hover:bg-se-border/30 ${ring}`}
                   >
                     <span
                       aria-hidden="true"
@@ -521,6 +625,18 @@ function NotificationBell({ userId, lang, t }) {
                         {timeAgo(item.created_at, lang)}
                       </span>
                     </span>
+                  </button>
+
+                  {/* ปุ่มลบ: เดสก์ท็อปแสดงตอน hover/โฟกัส — มือถือแสดงตลอด */}
+                  <button
+                    type="button"
+                    aria-label={n.remove}
+                    title={n.remove}
+                    tabIndex={open ? 0 : -1}
+                    onClick={() => removeOne(item.id)}
+                    className={`absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full text-se-text-muted transition hover:bg-se-danger/10 hover:text-se-danger focus-visible:opacity-100 sm:opacity-0 sm:group-focus-within:opacity-100 sm:group-hover:opacity-100 ${ring}`}
+                  >
+                    <Icon d={ICONS.trash} strokeWidth={2} className="h-4 w-4" />
                   </button>
                 </li>
               ))}
@@ -605,6 +721,44 @@ function ThemeToggle({ theme, setTheme, t }) {
         {t.themeTipBody}
       </div>
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  ConsoleFooter — Copyright (อยู่ท้ายพื้นที่เนื้อหา)                    */
+/* ------------------------------------------------------------------ */
+
+function ConsoleFooter({ t }) {
+  const year = getCurrentYear()
+
+  return (
+    <footer className="mt-8 shrink-0 border-t border-se-border/60 bg-se-surface/50 px-4 py-6 md:px-8">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <img
+            src="/logo.png"
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            className="h-8 w-8 flex-shrink-0 rounded-[9px] object-contain"
+          />
+          <div className="leading-tight">
+            <p className="text-[13px] font-semibold tracking-tight">SE-CONSOLE</p>
+            <p className="mt-0.5 text-[12px] text-se-text-muted">{t.footer.tagline}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5 text-[12px] leading-relaxed text-se-text-muted sm:items-end sm:text-right">
+          <p>
+            Copyright © {year} <span className="font-medium text-se-text-main">{COPYRIGHT_HOLDER}</span>. {t.footer.rights}
+          </p>
+          <p className="inline-flex items-center gap-1.5 sm:justify-end">
+            <span className="h-1.5 w-1.5 rounded-full bg-se-success" aria-hidden="true" />
+            {t.footer.madeIn}
+          </p>
+        </div>
+      </div>
+    </footer>
   )
 }
 
@@ -775,7 +929,7 @@ export default function ConsoleLayout() {
       <aside
         className={`${
           isCollapsed ? 'w-[72px]' : 'w-[264px]'
-        } z-20 flex flex-shrink-0 flex-col border-r border-se-border/60 bg-se-surface transition-all duration-300 ease-in-out motion-reduce:transition-none`}
+        } z-20 flex flex-shrink-0 flex-col border-r border-se-border/60 bg-se-surface/80 backdrop-blur-xl backdrop-saturate-150 transition-all duration-300 ease-in-out motion-reduce:transition-none`}
       >
         {/* Logo Section */}
         <div className="flex h-14 flex-shrink-0 items-center border-b border-se-border/60 px-[18px]">
@@ -787,15 +941,20 @@ export default function ConsoleLayout() {
               className="h-9 w-9 flex-shrink-0 rounded-[10px] object-contain"
             />
             {!isCollapsed && (
-              <span className="whitespace-nowrap text-[17px] font-semibold tracking-tight">SE-CONSOLE</span>
+              <div className="min-w-0 leading-tight">
+                <p className="truncate text-[16px] font-semibold tracking-tight">SE-CONSOLE</p>
+                <p className="mt-0.5 truncate text-[11px] text-se-text-muted">{t.workspace}</p>
+              </div>
             )}
           </div>
         </div>
 
         {/* Navigation Links */}
         <nav className="custom-scrollbar flex-1 overflow-y-auto px-3 py-4" aria-label={t.mainMenu}>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {navGroups.map((group) => {
+              const tone = NAV_TONE[group.id]
+
               // เมนูเดี่ยว (ไม่มีลูก)
               if (!group.children) {
                 const active = isActive(group.path)
@@ -806,7 +965,7 @@ export default function ConsoleLayout() {
                     title={isCollapsed ? group.title : undefined}
                     aria-label={isCollapsed ? group.title : undefined}
                     aria-current={active ? 'page' : undefined}
-                    className={`flex h-10 items-center gap-3 rounded-lg px-3 text-[14px] transition-colors ${
+                    className={`flex h-11 items-center gap-3 rounded-xl px-2.5 text-[14px] transition-colors ${
                       isCollapsed ? 'justify-center' : ''
                     } ${
                       active
@@ -814,7 +973,7 @@ export default function ConsoleLayout() {
                         : 'text-se-text-main/80 hover:bg-se-border/30'
                     } ${ring}`}
                   >
-                    <Icon d={group.icon} className="h-5 w-5 flex-shrink-0" />
+                    <NavIcon d={group.icon} tone={tone} />
                     {!isCollapsed && <span className="whitespace-nowrap">{group.title}</span>}
                   </Link>
                 )
@@ -835,7 +994,7 @@ export default function ConsoleLayout() {
                       if (isCollapsed) setIsCollapsed(false)
                       toggleGroup(group.id)
                     }}
-                    className={`flex h-10 w-full items-center rounded-lg px-3 text-[14px] transition-colors ${
+                    className={`flex h-11 w-full items-center rounded-xl px-2.5 text-[14px] transition-colors ${
                       isCollapsed ? 'justify-center' : 'justify-between'
                     } ${
                       hasActiveChild && !isGroupExpanded
@@ -844,10 +1003,7 @@ export default function ConsoleLayout() {
                     } ${ring}`}
                   >
                     <span className="flex items-center gap-3">
-                      <Icon
-                        d={group.icon}
-                        className={`h-5 w-5 flex-shrink-0 ${hasActiveChild ? 'text-se-primary' : ''}`}
-                      />
+                      <NavIcon d={group.icon} tone={tone} />
                       {!isCollapsed && (
                         <span
                           className={`whitespace-nowrap font-medium ${hasActiveChild ? 'text-se-primary' : ''}`}
@@ -875,7 +1031,7 @@ export default function ConsoleLayout() {
                       }`}
                     >
                       <div className="overflow-hidden">
-                        <div className="ml-[22px] mt-1 space-y-0.5 border-l border-se-border/70 pb-1 pl-3">
+                        <div className="ml-[24px] mt-1 space-y-0.5 border-l border-se-border/70 pb-1 pl-2">
                           {group.children.map((child) => {
                             const childActive = isActive(child.path)
                             return (
@@ -884,13 +1040,21 @@ export default function ConsoleLayout() {
                                 to={`/sework/se-console${child.path}`}
                                 tabIndex={isGroupExpanded ? 0 : -1}
                                 aria-current={childActive ? 'page' : undefined}
-                                className={`block rounded-lg px-3 py-2 text-[14px] transition-colors ${
+                                className={`group/child flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] transition-colors ${
                                   childActive
                                     ? 'bg-se-primary/10 font-semibold text-se-primary'
                                     : 'text-se-text-muted hover:bg-se-border/30 hover:text-se-text-main'
                                 } ${ring}`}
                               >
-                                {child.title}
+                                <span
+                                  aria-hidden="true"
+                                  className={`h-1.5 w-1.5 flex-shrink-0 rounded-full transition-colors ${
+                                    childActive
+                                      ? 'bg-se-primary'
+                                      : 'bg-se-border group-hover/child:bg-se-text-muted'
+                                  }`}
+                                />
+                                <span className="truncate">{child.title}</span>
                               </Link>
                             )
                           })}
@@ -911,7 +1075,7 @@ export default function ConsoleLayout() {
             onClick={() => setIsCollapsed(!isCollapsed)}
             aria-label={isCollapsed ? t.expand : t.collapse}
             title={isCollapsed ? t.expand : undefined}
-            className={`flex h-10 w-full items-center justify-center rounded-lg text-se-text-muted transition-colors hover:bg-se-border/30 hover:text-se-text-main ${ring}`}
+            className={`flex h-10 w-full items-center justify-center rounded-xl text-se-text-muted transition-colors hover:bg-se-border/30 hover:text-se-text-main ${ring}`}
           >
             <Icon
               d={ICONS.collapse}
@@ -1013,12 +1177,14 @@ export default function ConsoleLayout() {
           </div>
         </header>
 
-        {/* Page Content — เว้นด้านบนเท่าความสูง header (h-14) */}
-        <main className="custom-scrollbar h-full overflow-y-auto pt-14">
-          <div className="p-4 md:p-8">
+        {/* Page Content — เว้นด้านบนเท่าความสูง header (h-14) แล้วตามด้วย Footer */}
+        <main className="custom-scrollbar flex h-full flex-col overflow-y-auto pt-14">
+          <div className="min-w-0 flex-1 p-4 md:p-8">
             {/* ส่งภาษา/ธีมให้หน้าลูกใช้ผ่าน useOutletContext() */}
             <Outlet context={{ lang, theme }} />
           </div>
+
+          <ConsoleFooter t={t} />
         </main>
       </div>
 

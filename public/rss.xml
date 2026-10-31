@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SE-ONE.SITE</title>
-    <link>https://seone.site/</link>
+    <link>https://404.seone.site/</link>
     <description>ข่าวสารและอัปเดตจากระบบ Software Engineering Workspace สำหรับนักศึกษาวิศวกรรมซอฟต์แวร์ RMUTL Generations 4</description>
     <language>th</language>
     <copyright>© 2026 Software Engineering RMUTL Generations 4</copyright>
     <managingEditor>pattaradanais@seone.site (SE-ONE.SITE)</managingEditor>
     <webMaster>pattaradanais@seone.site (SE-ONE.SITE)</webMaster>
-    <lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0700</lastBuildDate>
+    <lastBuildDate>Sat, 31 Oct 2026 00:00:00 +0700</lastBuildDate>
     <ttl>60</ttl>
-    <atom:link href="https://seone.site/rss.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://404.seone.site/rss.xml" rel="self" type="application/rss+xml" />
     <image>
-      <url>https://seone.site/logo.png</url>
+      <url>https://404.seone.site/logo.png</url>
       <title>SE-ONE.SITE</title>
-      <link>https://seone.site/</link>
+      <link>https://404.seone.site/</link>
     </image>
 
     <item>
       <title>ยินดีต้อนรับสู่ SE-ONE.SITE</title>
-      <link>https://seone.site/about</link>
+      <link>https://404.seone.site/about</link>
       <guid isPermaLink="false">se-one-welcome-2026-10-08</guid>
       <pubDate>Thu, 08 Oct 2026 00:00:00 +0700</pubDate>
       <category>Announcement</category>
@@ -28,7 +28,7 @@
 
     <item>
       <title>อัปเกรดระบบ: อัปเดตเวอร์ชันใหม่แบบ Realtime</title>
-      <link>https://seone.site/</link>
+      <link>https://404.seone.site/</link>
       <guid isPermaLink="false">se-one-pwa-realtime-update-2026-10-08</guid>
       <pubDate>Thu, 08 Oct 2026 00:00:00 +0700</pubDate>
       <category>Release</category>

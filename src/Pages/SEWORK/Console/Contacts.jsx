@@ -5,7 +5,8 @@ import { useAuth } from '../../../contexts/AuthContext'
 
 /* -------------------------------------------------------------------------- */
 /*  Design tokens + styles                                                    */
-/*  Dark mode: ใส่ data-theme="dark" ที่ <html> หรือส่ง prop theme            */
+/*  Dark mode: ตามคลาส .dark ที่ <html> (ปุ่มสลับธีมของแอป)                   */
+/*  หรือใส่ data-theme="dark" / ส่ง prop theme ก็ได้                          */
 /* -------------------------------------------------------------------------- */
 
 const styles = `
@@ -51,6 +52,8 @@ const styles = `
   -moz-osx-font-smoothing: grayscale;
 }
 
+.dark .ct-root,
+.ct-root.dark,
 [data-theme='dark'] .ct-root,
 .ct-root[data-theme='dark'] {
   --ui-bg: #000000;

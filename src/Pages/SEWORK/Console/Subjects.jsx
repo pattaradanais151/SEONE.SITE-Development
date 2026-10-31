@@ -37,7 +37,8 @@ async function sendDiscord(message) {
 
 /* ------------------------------------------------------------------ */
 /*  Design tokens + styles                                             */
-/*  Dark mode: ใส่ data-theme="dark" ที่ <html> หรือส่ง prop theme     */
+/*  Dark mode: ตามคลาส .dark ที่ <html> (ปุ่มสลับธีมของแอป)            */
+/*  หรือใส่ data-theme="dark" / ส่ง prop theme ก็ได้                   */
 /* ------------------------------------------------------------------ */
 
 const styles = `
@@ -79,6 +80,8 @@ const styles = `
   -moz-osx-font-smoothing: grayscale;
 }
 
+.dark .sj-root,
+.sj-root.dark,
 [data-theme='dark'] .sj-root,
 .sj-root[data-theme='dark'] {
   --ui-bg: #000000;

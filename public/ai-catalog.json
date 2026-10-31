@@ -1,14 +1,14 @@
 {
   "name": "SE-ONE Workspace",
   "description": "The official learning ecosystem, IDE, cloud storage, and portfolio platform for Software Engineering Gen 4 at RMUTL.",
-  "version": "2.2.0",
-  "updated": "2026-10-13",
+  "version": "2.2.1",
+  "updated": "2026-10-31",
   "organization": "Software Engineering Gen 4, RMUTL",
-  "url": "https://seone.site",
+  "url": "https://404.seone.site",
   "language": "th",
   "contact": {
     "email": "pattaradanais@seone.site",
-    "url": "https://seone.site/support"
+    "url": "https://404.seone.site/support"
   },
   "endpoints": [
     {

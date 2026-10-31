@@ -4,6 +4,9 @@ import ProtectedRoute from './components/ProtectedRoute'
 import MainLayout from './components/MainLayout'
 import ConsoleLayout from './components/ConsoleLayout'
 
+//TollFee
+import TollFeeRegister from './Pages/TollFee/Register'
+
 // Public & Portal
 import Landing from './Pages/Public/Landing'
 import Talents from './Pages/Public/Talents'
@@ -80,6 +83,9 @@ export default function App() {
         <Route path="/portal" element={<Portal />} />
         <Route path="/legal-center" element={<LegalCenter />} />
       </Route>
+
+      {/*TollFee*/}
+      <Route path="/tollfee/register" element={<TollFeeRegister />} />
 
       {/* SEWORK - Public Routes */}
       <Route path="/sework/landing" element={<SeworkLanding />} />

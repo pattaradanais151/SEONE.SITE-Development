@@ -23,7 +23,7 @@ const greeting = (h) => {
 }
 
 const donutGradient = (items, total) => {
-  if (!total) return 'conic-gradient(#e5e5ea 0 100%)'
+  if (!total) return 'conic-gradient(var(--se-donut-empty, #e5e5ea) 0 100%)'
   let acc = 0
   const parts = items.map((it, i) => {
     const start = (acc / total) * 100
@@ -58,7 +58,7 @@ function useCountUp(target, duration = 900) {
 
 /* ---------- Small components ---------- */
 const cardCls =
-  'rounded-[24px] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06]'
+  'rounded-[24px] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06] dark:bg-[#1c1c1e] dark:shadow-none dark:ring-white/[0.08]'
 
 function Avatar({ src, name, size = 64, className = '' }) {
   const [failed, setFailed] = useState(false)
@@ -66,7 +66,7 @@ function Avatar({ src, name, size = 64, className = '' }) {
   return (
     <div
       style={{ width: size, height: size }}
-      className={`flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#f0ecff] font-semibold text-[#0071e3] ring-1 ring-black/[0.06] ${className}`}
+      className={`flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#f0ecff] font-semibold text-[#0071e3] ring-1 ring-black/[0.06] dark:from-[#1a2a44] dark:to-[#26244a] dark:text-[#0a84ff] dark:ring-white/10 ${className}`}
     >
       {src && !failed ? (
         <img src={src} alt={name} draggable={false} onError={() => setFailed(true)} className="h-full w-full object-cover" />
@@ -79,10 +79,10 @@ function Avatar({ src, name, size = 64, className = '' }) {
 
 function Badge({ children, tone = 'blue' }) {
   const tones = {
-    blue: 'bg-[#0071e3]/10 text-[#0071e3]',
-    gray: 'bg-black/[0.05] text-[#6e6e73]',
-    green: 'bg-[#34c759]/15 text-[#248a3d]',
-    orange: 'bg-[#ff9f0a]/15 text-[#b25f00]',
+    blue: 'bg-[#0071e3]/10 text-[#0071e3] dark:bg-[#0a84ff]/20 dark:text-[#4da3ff]',
+    gray: 'bg-black/[0.05] text-[#6e6e73] dark:bg-white/10 dark:text-[#a1a1a6]',
+    green: 'bg-[#34c759]/15 text-[#248a3d] dark:bg-[#30d158]/20 dark:text-[#30d158]',
+    orange: 'bg-[#ff9f0a]/15 text-[#b25f00] dark:bg-[#ff9f0a]/20 dark:text-[#ffb340]',
   }
   return (
     <span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.05em] ${tones[tone]}`}>
@@ -96,7 +96,7 @@ function StatCard({ label, value, hint, icon, gradient, delay = 0 }) {
   return (
     <div className={`se-rise ${cardCls}`} style={{ animationDelay: `${delay}ms` }}>
       <div className="flex items-start justify-between">
-        <p className="text-[13px] font-medium text-[#6e6e73]">{label}</p>
+        <p className="text-[13px] font-medium text-[#6e6e73] dark:text-[#a1a1a6]">{label}</p>
         <div className={`flex h-9 w-9 items-center justify-center rounded-[11px] bg-gradient-to-br ${gradient} shadow-[0_4px_12px_rgba(0,0,0,0.12)]`}>
           <svg className="h-[18px] w-[18px] text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             {icon}
@@ -105,9 +105,9 @@ function StatCard({ label, value, hint, icon, gradient, delay = 0 }) {
       </div>
       <div className="mt-4 text-[40px] font-semibold leading-none tracking-[-0.03em] tabular-nums">
         {value === undefined ? (
-          <span className="inline-block h-10 w-16 animate-pulse rounded-lg bg-black/[0.06]" />
+          <span className="inline-block h-10 w-16 animate-pulse rounded-lg bg-black/[0.06] dark:bg-white/10" />
         ) : value === null ? (
-          <span className="text-[#c7c7cc]">–</span>
+          <span className="text-[#c7c7cc] dark:text-[#48484a]">–</span>
         ) : (
           animated
         )}
@@ -126,9 +126,9 @@ function BarList({ items, emptyText }) {
         <li key={it.label}>
           <div className="mb-1.5 flex items-baseline justify-between text-[14px]">
             <span className="font-medium">{it.label}</span>
-            <span className="tabular-nums text-[#6e6e73]">{it.value} คน</span>
+            <span className="tabular-nums text-[#6e6e73] dark:text-[#a1a1a6]">{it.value} คน</span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-black/[0.06]">
+          <div className="h-2.5 overflow-hidden rounded-full bg-black/[0.06] dark:bg-white/10">
             <div
               className="h-full rounded-full transition-[width] duration-1000 ease-[cubic-bezier(.28,.11,.32,1)]"
               style={{
@@ -146,7 +146,7 @@ function BarList({ items, emptyText }) {
 function InfoRow({ label, children }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3 text-[14px]">
-      <span className="text-[#6e6e73]">{label}</span>
+      <span className="text-[#6e6e73] dark:text-[#a1a1a6]">{label}</span>
       <span className="text-right font-medium">{children}</span>
     </div>
   )
@@ -225,9 +225,9 @@ export default function Dashboard() {
     : '–'
 
   const dbPill = {
-    checking: { dot: 'bg-[#ff9f0a]', text: 'text-[#b25f00]', label: 'กำลังตรวจสอบ...' },
-    connected: { dot: 'bg-[#34c759]', text: 'text-[#248a3d]', label: 'Database Connected' },
-    error: { dot: 'bg-[#ff3b30]', text: 'text-[#d70015]', label: 'Database Error' },
+    checking: { dot: 'bg-[#ff9f0a]', text: 'text-[#b25f00] dark:text-[#ffb340]', label: 'กำลังตรวจสอบ...' },
+    connected: { dot: 'bg-[#34c759]', text: 'text-[#248a3d] dark:text-[#30d158]', label: 'Database Connected' },
+    error: { dot: 'bg-[#ff3b30]', text: 'text-[#d70015] dark:text-[#ff6961]', label: 'Database Error' },
   }[dbStatus]
 
   const recentMembers = (members || []).slice(0, 8)
@@ -238,26 +238,27 @@ export default function Dashboard() {
         @keyframes se-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
         .se-rise { opacity: 0; animation: se-rise .7s cubic-bezier(.28,.11,.32,1) forwards; }
         @media (prefers-reduced-motion: reduce) { .se-rise { animation: none; opacity: 1; } }
+        .dark { --se-donut-empty: #3a3a3c; }
       `}</style>
 
       {/* ===== Header ===== */}
       <div className="se-rise mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-[13px] font-medium text-[#6e6e73]">
+          <p className="text-[13px] font-medium text-[#6e6e73] dark:text-[#a1a1a6]">
             {dateText} · {timeText} น.
           </p>
           <h1 className="mt-1 text-[32px] font-semibold leading-[1.2] tracking-[-0.03em] md:text-[44px]">
             {greeting(now.getHours())},{' '}
-            <span className="bg-gradient-to-r from-[#0071e3] to-[#5e5ce6] bg-clip-text text-transparent">{displayName}</span>
+            <span className="bg-gradient-to-r from-[#0071e3] to-[#5e5ce6] bg-clip-text text-transparent dark:from-[#4da3ff] dark:to-[#8e8cff]">{displayName}</span>
           </h1>
-          <p className="mt-1 text-[16px] text-[#6e6e73]">ยินดีต้อนรับเข้าสู่ระบบจัดการ SEWORK</p>
+          <p className="mt-1 text-[16px] text-[#6e6e73] dark:text-[#a1a1a6]">ยินดีต้อนรับเข้าสู่ระบบจัดการ SEWORK</p>
         </div>
 
         <button
           type="button"
           onClick={load}
           disabled={dbStatus === 'checking'}
-          className="group inline-flex items-center gap-2.5 self-start rounded-full bg-white px-4 py-2 text-[13px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06] transition hover:ring-black/[0.15] disabled:opacity-70 md:self-auto"
+          className="group inline-flex items-center gap-2.5 self-start rounded-full bg-white px-4 py-2 text-[13px] shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.06] transition hover:ring-black/[0.15] disabled:opacity-70 dark:bg-[#1c1c1e] dark:shadow-none dark:ring-white/[0.08] dark:hover:ring-white/25 md:self-auto"
           title="ตรวจสอบการเชื่อมต่ออีกครั้ง"
         >
           <span className="relative flex h-2.5 w-2.5">
@@ -298,7 +299,7 @@ export default function Dashboard() {
                 <h2 className="truncate text-[26px] font-semibold tracking-[-0.025em]">{fullName}</h2>
                 {profile?.role && <Badge>{profile.role}</Badge>}
               </div>
-              <p className="mt-0.5 truncate text-[15px] text-[#6e6e73]">{user?.email}</p>
+              <p className="mt-0.5 truncate text-[15px] text-[#6e6e73] dark:text-[#a1a1a6]">{user?.email}</p>
 
               <div className="mt-4 flex flex-wrap gap-2">
                 <Badge tone="gray">{profile?.sec || 'SEC ยังไม่กำหนด'}</Badge>
@@ -310,10 +311,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="relative mt-7 grid grid-cols-1 gap-x-8 divide-y divide-black/[0.06] border-t border-black/[0.06] sm:grid-cols-2 sm:divide-y-0">
+          <div className="relative mt-7 grid grid-cols-1 gap-x-8 divide-y divide-black/[0.06] border-t border-black/[0.06] dark:divide-white/10 dark:border-white/10 sm:grid-cols-2 sm:divide-y-0">
             <InfoRow label="อีเมล">{user?.email || '–'}</InfoRow>
             <InfoRow label="ระดับสิทธิ์">
-              <span className="uppercase text-[#0071e3]">{profile?.role || '–'}</span>
+              <span className="uppercase text-[#0071e3] dark:text-[#0a84ff]">{profile?.role || '–'}</span>
             </InfoRow>
             <InfoRow label="แผนการเรียน">
               {profile?.sec || 'ยังไม่กำหนด'} (ชั้นปี {profile?.year_level || '-'})
@@ -325,28 +326,28 @@ export default function Dashboard() {
         {/* System status */}
         <section className={`se-rise ${cardCls}`} style={{ animationDelay: '120ms' }}>
           <h2 className="text-[17px] font-semibold tracking-[-0.01em]">สถานะระบบ</h2>
-          <ul className="mt-3 divide-y divide-black/[0.06]">
+          <ul className="mt-3 divide-y divide-black/[0.06] dark:divide-white/10">
             <li className="flex items-center justify-between py-3 text-[14px]">
-              <span className="text-[#6e6e73]">ฐานข้อมูล</span>
+              <span className="text-[#6e6e73] dark:text-[#a1a1a6]">ฐานข้อมูล</span>
               <span className={`font-medium ${dbPill.text}`}>
                 {dbStatus === 'connected' ? 'ออนไลน์' : dbStatus === 'error' ? 'ขัดข้อง' : 'กำลังตรวจสอบ'}
               </span>
             </li>
             <li className="flex items-center justify-between py-3 text-[14px]">
-              <span className="text-[#6e6e73]">ความหน่วง</span>
+              <span className="text-[#6e6e73] dark:text-[#a1a1a6]">ความหน่วง</span>
               <span className="font-medium tabular-nums">{latency !== null ? `${latency} ms` : '–'}</span>
             </li>
             <li className="flex items-center justify-between py-3 text-[14px]">
-              <span className="text-[#6e6e73]">Authentication</span>
-              <span className="font-medium text-[#248a3d]">{user ? 'Active' : '–'}</span>
+              <span className="text-[#6e6e73] dark:text-[#a1a1a6]">Authentication</span>
+              <span className="font-medium text-[#248a3d] dark:text-[#30d158]">{user ? 'Active' : '–'}</span>
             </li>
             <li className="flex items-center justify-between py-3 text-[14px]">
-              <span className="text-[#6e6e73]">Environment</span>
+              <span className="text-[#6e6e73] dark:text-[#a1a1a6]">Environment</span>
               <span className="font-medium uppercase">{import.meta.env.MODE}</span>
             </li>
           </ul>
           {dbStatus === 'error' && (
-            <p className="mt-3 rounded-xl bg-[#ff3b30]/10 px-3 py-2 text-[12px] leading-[1.5] text-[#d70015]">
+            <p className="mt-3 rounded-xl bg-[#ff3b30]/10 px-3 py-2 text-[12px] leading-[1.5] text-[#d70015] dark:bg-[#ff453a]/15 dark:text-[#ff6961]">
               โหลดข้อมูลสมาชิกไม่สำเร็จ ตรวจสอบสิทธิ์ (RLS) ของตาราง profiles แล้วกดตรวจสอบอีกครั้ง
             </p>
           )}
@@ -401,7 +402,7 @@ export default function Dashboard() {
           ) : (
             <div className="space-y-4">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="h-6 animate-pulse rounded-full bg-black/[0.06]" />
+                <div key={i} className="h-6 animate-pulse rounded-full bg-black/[0.06] dark:bg-white/10" />
               ))}
             </div>
           )}
@@ -417,7 +418,7 @@ export default function Dashboard() {
                 role="img"
                 aria-label="สัดส่วนสมาชิกตามระดับสิทธิ์"
               >
-                <div className="absolute inset-[22px] flex flex-col items-center justify-center rounded-full bg-white">
+                <div className="absolute inset-[22px] flex flex-col items-center justify-center rounded-full bg-white dark:bg-[#1c1c1e]">
                   <span className="text-[30px] font-semibold leading-none tracking-[-0.03em] tabular-nums">{stats.total}</span>
                   <span className="mt-1 text-[11px] text-[#86868b]">สมาชิก</span>
                 </div>
@@ -429,13 +430,13 @@ export default function Dashboard() {
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: PALETTE[i % PALETTE.length] }} />
                       <span className="font-medium">{r.label}</span>
                     </span>
-                    <span className="tabular-nums text-[#6e6e73]">{r.value}</span>
+                    <span className="tabular-nums text-[#6e6e73] dark:text-[#a1a1a6]">{r.value}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ) : (
-            <div className="mx-auto h-40 w-40 animate-pulse rounded-full bg-black/[0.06]" />
+            <div className="mx-auto h-40 w-40 animate-pulse rounded-full bg-black/[0.06] dark:bg-white/10" />
           )}
         </section>
       </div>
@@ -445,7 +446,7 @@ export default function Dashboard() {
         <section className={`se-rise lg:col-span-2 ${cardCls}`} style={{ animationDelay: '460ms' }}>
           <div className="mb-5 flex items-baseline justify-between">
             <h2 className="text-[17px] font-semibold tracking-[-0.01em]">สมาชิกในระบบ</h2>
-            <Link to="/talents" className="text-[14px] text-[#0066cc] underline-offset-4 hover:underline">
+            <Link to="/talents" className="text-[14px] text-[#0066cc] underline-offset-4 hover:underline dark:text-[#4da3ff]">
               ดูทั้งหมด <span aria-hidden>›</span>
             </Link>
           </div>
@@ -453,7 +454,7 @@ export default function Dashboard() {
           {!members ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-[88px] animate-pulse rounded-2xl bg-black/[0.06]" />
+                <div key={i} className="h-[88px] animate-pulse rounded-2xl bg-black/[0.06] dark:bg-white/10" />
               ))}
             </div>
           ) : recentMembers.length === 0 ? (
@@ -464,7 +465,7 @@ export default function Dashboard() {
                 {recentMembers.map((m) => {
                   const name = m.nickname || m.first_name || 'No Name'
                   return (
-                    <li key={m.id} className="flex flex-col items-center rounded-2xl bg-[#f5f5f7] px-3 py-4 text-center">
+                    <li key={m.id} className="flex flex-col items-center rounded-2xl bg-[#f5f5f7] px-3 py-4 text-center dark:bg-[#2c2c2e]">
                       <Avatar src={m.profile_image_url} name={name} size={44} />
                       <p className="mt-2 w-full truncate text-[13px] font-medium">{name}</p>
                       <p className="w-full truncate text-[11px] uppercase text-[#86868b]">{m.role || 'member'}</p>
@@ -492,12 +493,12 @@ export default function Dashboard() {
               <li key={l.to}>
                 <Link
                   to={l.to}
-                  className="group flex items-center gap-3 rounded-2xl bg-[#f5f5f7] p-3 transition hover:bg-[#ececf0]"
+                  className="group flex items-center gap-3 rounded-2xl bg-[#f5f5f7] p-3 transition hover:bg-[#ececf0] dark:bg-[#2c2c2e] dark:hover:bg-[#3a3a3c]"
                 >
                   <span className={`h-10 w-10 flex-shrink-0 rounded-[12px] bg-gradient-to-br ${l.gradient}`} />
                   <span className="min-w-0 flex-1">
                     <span className="block text-[14px] font-semibold">{l.title}</span>
-                    <span className="block truncate text-[12px] text-[#6e6e73]">{l.sub}</span>
+                    <span className="block truncate text-[12px] text-[#6e6e73] dark:text-[#a1a1a6]">{l.sub}</span>
                   </span>
                   <span aria-hidden className="text-[#86868b] transition-transform group-hover:translate-x-0.5">›</span>
                 </Link>

@@ -140,7 +140,7 @@ export default function Schedules() {
           <select 
             value={secFilter} 
             onChange={e => setSecFilter(e.target.value)}
-            className="bg-white border border-[var(--color-se-border)] text-se-text-main text-sm font-medium rounded-xl px-4 py-2.5 focus:outline-none focus:border-[var(--color-se-primary)] shadow-sm"
+            className="bg-white dark:bg-[#1c1c1e] dark:[color-scheme:dark] border border-[var(--color-se-border)] text-se-text-main text-sm font-medium rounded-xl px-4 py-2.5 focus:outline-none focus:border-[var(--color-se-primary)] shadow-sm"
           >
             <option value="All">ทุกกลุ่มเรียน (All SEC)</option>
             <option value="SEC 1">SEC 1 (ปกติ)</option>
@@ -160,18 +160,18 @@ export default function Schedules() {
       {/* Modal เพิ่มตารางเรียน */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-lg shadow-2xl border border-[var(--color-se-border)] max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-[#1c1c1e] rounded-[32px] p-8 w-full max-w-lg shadow-2xl border border-[var(--color-se-border)] max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold text-se-text-main mb-6">อัปโหลดตารางเรียนใหม่</h2>
             
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-se-text-main mb-1.5 ml-1">หัวข้อตาราง</label>
-                <input type="text" placeholder="เช่น ตารางเรียน ปี 1 เทอม 1" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-[var(--color-se-border)] bg-gray-50 focus:outline-none focus:border-[var(--color-se-primary)]" required />
+                <input type="text" placeholder="เช่น ตารางเรียน ปี 1 เทอม 1" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-[var(--color-se-border)] bg-gray-50 dark:bg-[#2c2c2e] dark:text-[#f5f5f7] dark:placeholder:text-[#86868b] focus:outline-none focus:border-[var(--color-se-primary)]" required />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-se-text-main mb-1.5 ml-1">กลุ่มเรียน (SEC)</label>
-                <select value={formData.sec} onChange={e => setFormData({...formData, sec: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-[var(--color-se-border)] bg-gray-50 focus:outline-none focus:border-[var(--color-se-primary)]">
+                <select value={formData.sec} onChange={e => setFormData({...formData, sec: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-[var(--color-se-border)] bg-gray-50 dark:bg-[#2c2c2e] dark:text-[#f5f5f7] dark:[color-scheme:dark] focus:outline-none focus:border-[var(--color-se-primary)]">
                   <option value="SEC 1">SEC 1 (ปกติ)</option>
                   <option value="SEC 2">SEC 2 (เทียบโอน)</option>
                 </select>
@@ -180,17 +180,17 @@ export default function Schedules() {
               <div>
                 <label className="block text-sm font-medium text-se-text-main mb-1.5 ml-1">แนบรูปภาพตาราง (JPG, PNG)</label>
                 {preview ? (
-                  <div className="relative rounded-2xl overflow-hidden border border-gray-200">
-                    <img src={preview} alt="Preview" className="w-full h-auto object-contain bg-gray-100" style={{ maxHeight: '200px' }} />
+                  <div className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10">
+                    <img src={preview} alt="Preview" className="w-full h-auto object-contain bg-gray-100 dark:bg-[#2c2c2e]" style={{ maxHeight: '200px' }} />
                     <button type="button" onClick={() => { setFile(null); setPreview(null); }} className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-1.5 transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-2xl hover:bg-gray-50 hover:border-blue-400 transition-colors cursor-pointer bg-white">
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-white/20 rounded-2xl hover:bg-gray-50 dark:hover:bg-white/5 hover:border-blue-400 transition-colors cursor-pointer bg-white dark:bg-[#1c1c1e]">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg className="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                      <p className="text-sm text-gray-500 font-medium">คลิกเพื่อเลือกไฟล์รูปภาพ</p>
+                      <p className="text-sm text-gray-500 dark:text-[#a1a1a6] font-medium">คลิกเพื่อเลือกไฟล์รูปภาพ</p>
                     </div>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                   </label>
@@ -198,8 +198,8 @@ export default function Schedules() {
               </div>
 
               <div className="flex justify-end space-x-3 pt-4 border-t border-[var(--color-se-border)] mt-6">
-                <button type="button" onClick={() => { setShowForm(false); setPreview(null); setFile(null); }} className="px-6 py-2.5 rounded-xl text-se-text-main font-medium hover:bg-gray-100 transition-colors">ยกเลิก</button>
-                <button type="submit" disabled={submitting || !file} className={`px-6 py-2.5 rounded-xl text-white font-medium transition-colors shadow-sm ${submitting || !file ? 'bg-blue-300 cursor-not-allowed' : 'bg-[var(--color-se-primary)] hover:bg-[var(--color-se-primary-hover)]'}`}>
+                <button type="button" onClick={() => { setShowForm(false); setPreview(null); setFile(null); }} className="px-6 py-2.5 rounded-xl text-se-text-main font-medium hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">ยกเลิก</button>
+                <button type="submit" disabled={submitting || !file} className={`px-6 py-2.5 rounded-xl text-white font-medium transition-colors shadow-sm ${submitting || !file ? 'bg-blue-300 dark:bg-[#0a84ff]/40 cursor-not-allowed' : 'bg-[var(--color-se-primary)] hover:bg-[var(--color-se-primary-hover)]'}`}>
                   อัปโหลด
                 </button>
               </div>
@@ -221,14 +221,14 @@ export default function Schedules() {
       {/* Grid แสดงตารางเรียน */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full p-12 text-center text-se-text-muted bg-white rounded-[32px] border border-[var(--color-se-border)]">กำลังโหลดข้อมูล...</div>
+          <div className="col-span-full p-12 text-center text-se-text-muted bg-white dark:bg-[#1c1c1e] rounded-[32px] border border-[var(--color-se-border)]">กำลังโหลดข้อมูล...</div>
         ) : filteredSchedules.length === 0 ? (
-          <div className="col-span-full p-12 text-center text-se-text-muted bg-white rounded-[32px] border border-[var(--color-se-border)] border-dashed">
+          <div className="col-span-full p-12 text-center text-se-text-muted bg-white dark:bg-[#1c1c1e] rounded-[32px] border border-[var(--color-se-border)] border-dashed">
             ยังไม่มีตารางเรียนสำหรับกลุ่มนี้
           </div>
         ) : (
           filteredSchedules.map((item) => (
-            <div key={item.id} className="bg-white rounded-[32px] border border-[var(--color-se-border)] shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col group relative">
+            <div key={item.id} className="bg-white dark:bg-[#1c1c1e] rounded-[32px] border border-[var(--color-se-border)] shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col group relative">
               
               {canManage && (
                 <button 
@@ -242,7 +242,7 @@ export default function Schedules() {
 
               {/* ส่วนแสดงรูปภาพ (คลิกเพื่อขยาย) */}
               <div 
-                className="w-full h-48 bg-gray-100 cursor-pointer relative overflow-hidden"
+                className="w-full h-48 bg-gray-100 dark:bg-[#2c2c2e] cursor-pointer relative overflow-hidden"
                 onClick={() => setViewImage(item.image_url)}
               >
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -254,10 +254,10 @@ export default function Schedules() {
               </div>
 
               {/* ข้อมูลด้านล่าง */}
-              <div className="p-6 flex-1 flex flex-col bg-white z-10 relative">
+              <div className="p-6 flex-1 flex flex-col bg-white dark:bg-[#1c1c1e] z-10 relative">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-bold text-se-text-main line-clamp-1 flex-1 pr-2">{item.title}</h3>
-                  <span className="text-[10px] font-bold bg-blue-50 text-[var(--color-se-primary)] px-2.5 py-1 rounded-md uppercase whitespace-nowrap">
+                  <span className="text-[10px] font-bold bg-blue-50 dark:bg-[#0a84ff]/20 text-[var(--color-se-primary)] px-2.5 py-1 rounded-md uppercase whitespace-nowrap">
                     {item.sec}
                   </span>
                 </div>

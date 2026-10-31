@@ -6,23 +6,23 @@ SE-ONE.SITE is a platform built for software engineering students. It combines a
 
 ## Public pages
 
-- [Home](https://seone.site/): Entry point of the ecosystem, introducing every module.
-- [About](https://seone.site/about): Purpose of the project, plus the developer and organization behind it.
-- [Talents](https://seone.site/talents): Directory of SE Gen 4 student developers with role tags and live GitHub stats (repositories, followers, following).
-- [Support](https://seone.site/support): Contact form (name, nickname, reply email, subject, details). The team replies by email.
+- [Home](https://404.seone.site/): Entry point of the ecosystem, introducing every module.
+- [About](https://404.seone.site/about): Purpose of the project, plus the developer and organization behind it.
+- [Talents](https://404.seone.site/talents): Directory of SE Gen 4 student developers with role tags and live GitHub stats (repositories, followers, following).
+- [Support](https://404.seone.site/support): Contact form (name, nickname, reply email, subject, details). The team replies by email.
 
 ## Core subsystems
 
 ### SEWORK (LMS and class management)
 
-- [SEWORK overview](https://seone.site/sework/landing): Public introduction to the learning management system.
-- Sign-in: https://seone.site/sework/login (requires login; password reset is supported).
+- [SEWORK overview](https://404.seone.site/sework/landing): Public introduction to the learning management system.
+- Sign-in: https://404.seone.site/sework/login (requires login; password reset is supported).
 - Console (requires login, `/sework/se-console/*`): Dashboard, Announcements, Assignments, Subjects, Schedules, Semesters, Sheet Data, Submission Links, Submission Tracking, Leaderboard, Resource Center, Contacts, Internal Links, Profile, and Users Management (administrators only).
 - Announcements and new or deleted assignments are also pushed to the class Discord server.
 
 ### Coding Studio (in-browser IDE)
 
-- [Coding Studio overview](https://seone.site/coding/landing): Public introduction to the coding workspace.
+- [Coding Studio overview](https://404.seone.site/coding/landing): Public introduction to the coding workspace.
 - Engine: Monaco Editor (the VS Code engine).
 - Supported languages:
   - Web native (HTML/CSS/JS) with live preview
@@ -34,8 +34,8 @@ SE-ONE.SITE is a platform built for software engineering students. It combines a
 
 ### CloudFiles (private cloud storage)
 
-- [CloudFiles overview](https://seone.site/cloudfiles/landing): Public introduction to the cloud file center.
-- Sign-in: https://seone.site/cloudfiles/login (requires login with a SEWORK account).
+- [CloudFiles overview](https://404.seone.site/cloudfiles/landing): Public introduction to the cloud file center.
+- Sign-in: https://404.seone.site/cloudfiles/login (requires login with a SEWORK account).
 - Features: upload and download files, create folders, password-protect folders (2FA-style), share resources.
 
 ## Technology stack
@@ -48,12 +48,12 @@ SE-ONE.SITE is a platform built for software engineering students. It combines a
 
 ## Machine-readable resources
 
-- [AI catalog](https://seone.site/ai-catalog.json): Structured list of endpoints and guidance for AI assistants.
-- [Sitemap](https://seone.site/sitemap.xml)
-- [RSS feed](https://seone.site/rss.xml): Project news and updates.
-- [Web app manifest](https://seone.site/manifest.webmanifest)
+- [AI catalog](https://404.seone.site/ai-catalog.json): Structured list of endpoints and guidance for AI assistants.
+- [Sitemap](https://404.seone.site/sitemap.xml)
+- [RSS feed](https://404.seone.site/rss.xml): Project news and updates.
+- [Web app manifest](https://404.seone.site/manifest.webmanifest)
 
 ## Contact
 
-- Support form: https://seone.site/support
+- Support form: https://404.seone.site/support
 - Email: pattaradanais@seone.site

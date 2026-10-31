@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ให้ dark: ของ Tailwind v4 ทำงานตามคลาส .dark (ปุ่มสลับธีม) แทนการตามค่า OS */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   

@@ -26,9 +26,9 @@ const HeartIcon = mk('M20.8 5.6a5.2 5.2 0 00-7.4 0L12 7l-1.4-1.4a5.2 5.2 0 00-7.
 const CheckIcon = mk('M5 12.5l4.5 4.5L19 7.5')
 const LockIcon = mk('M6 11V8a6 6 0 1112 0v3M5 11h14v10H5V11z')
 
-
 const LOGO_SRC = '/logo.png'
 
+/* ================= Emotion: theme + styles ================= */
 const theme = {
   colors: { blue: '#0071e3', indigo: '#5e5ce6', violet: '#bf5af2', ink: '#1d1d1f', gray: '#6e6e73' },
   ease: 'cubic-bezier(.28,.11,.32,1)',
@@ -85,7 +85,7 @@ const GradientText = styled.span`
   ${noMotion}
 `
 
-// แสงออโรราด้านหลัง Hero
+// แสงออโรราด้านหลัง Hero (3 ดวง)
 const Aurora = styled.div`
   position: absolute;
   inset: 0;
@@ -100,97 +100,21 @@ const Aurora = styled.div`
     height: 60%;
     border-radius: 50%;
     filter: blur(90px);
-    opacity: 0.55;
+    opacity: 0.6;
     animation: ${drift} 20s ease-in-out infinite;
     ${noMotion}
   }
   &::before {
     top: -12%;
     left: -8%;
-    background: radial-gradient(circle, rgba(0, 113, 227, 0.35), transparent 70%);
+    background: radial-gradient(circle, rgba(0, 113, 227, 0.38), transparent 70%);
   }
   &::after {
     top: 8%;
     right: -10%;
-    background: radial-gradient(circle, rgba(191, 90, 242, 0.28), transparent 70%);
+    background: radial-gradient(circle, rgba(191, 90, 242, 0.32), transparent 70%);
     animation-duration: 26s;
     animation-direction: reverse;
-  }
-`
-
-// Navigation แบบกระจกฝ้า
-const GlassHeader = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  width: 100%;
-  background: rgba(251, 251, 253, 0.72);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-`
-const NavInner = styled.nav`
-  max-width: 1024px;
-  height: 52px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-`
-const NavBrand = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: ${(p) => p.theme.colors.ink};
-  &:focus-visible {
-    outline: 2px solid ${(p) => p.theme.colors.blue};
-    outline-offset: 4px;
-    border-radius: 6px;
-  }
-`
-const NavLinks = styled.ul`
-  display: none;
-  align-items: center;
-  gap: 28px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  @media (min-width: 768px) {
-    display: flex;
-  }
-`
-const NavLink = styled(Link)`
-  font-size: 13px;
-  color: ${(p) => p.theme.colors.ink};
-  opacity: 0.8;
-  transition: opacity 0.25s ${(p) => p.theme.ease};
-  &:hover {
-    opacity: 1;
-  }
-  &:focus-visible {
-    outline: 2px solid ${(p) => p.theme.colors.blue};
-    outline-offset: 4px;
-    border-radius: 4px;
-  }
-`
-const NavCta = styled(Link)`
-  padding: 5px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  color: #fff;
-  background: ${(p) => p.theme.colors.blue};
-  transition: background 0.25s ${(p) => p.theme.ease};
-  &:hover {
-    background: #0077ed;
-  }
-  &:focus-visible {
-    outline: 2px solid ${(p) => p.theme.colors.blue};
-    outline-offset: 3px;
   }
 `
 
@@ -223,6 +147,7 @@ const LogoFallback = styled.span`
   ${(p) =>
     p.$float &&
     css`
+      box-shadow: 0 18px 30px rgba(0, 113, 227, 0.28);
       animation: ${floatY} 6s ease-in-out infinite;
       ${noMotion}
     `}
@@ -245,9 +170,7 @@ const apps = [
   {
     id: 'sework',
     name: 'SEWORK',
-    accent: 'text-[#0071e3]',
-    gradient: 'from-[#5ab0ff] to-[#0071e3]',
-    glow: 'shadow-[0_20px_50px_rgba(0,113,227,0.35)]',
+    gradient: 'from-[#5ab0ff] via-[#2b8cf0] to-[#0058c4]',
     Icon: BookIcon,
     feeling: 'สบายใจทุกครั้งที่กดส่ง',
     headline: 'เรียน ส่งงาน\nและแข่งขันในที่เดียว.',
@@ -259,9 +182,7 @@ const apps = [
   {
     id: 'cloudfiles',
     name: 'CLOUDFILES',
-    accent: 'text-[#bf4800]',
-    gradient: 'from-[#ff9f7a] to-[#ff5a36]',
-    glow: 'shadow-[0_20px_50px_rgba(255,90,54,0.35)]',
+    gradient: 'from-[#ffb08f] via-[#ff7a4d] to-[#ee4b22]',
     Icon: CloudIcon,
     feeling: 'ไฟล์ของคุณ อยู่ตรงนั้นเสมอ',
     headline: 'เก็บและแบ่งปันไฟล์\nอย่างปลอดภัย.',
@@ -273,9 +194,7 @@ const apps = [
   {
     id: 'coding',
     name: 'CODING',
-    accent: 'text-[#248a3d]',
-    gradient: 'from-[#6bea9f] to-[#1fb45a]',
-    glow: 'shadow-[0_20px_50px_rgba(31,180,90,0.35)]',
+    gradient: 'from-[#7bf0ad] via-[#2fc96d] to-[#119447]',
     Icon: CodeIcon,
     feeling: 'ไอเดียแรก ลองได้ทันที',
     headline: 'ลงมือเขียนโค้ด\nได้ทันที.',
@@ -291,16 +210,19 @@ const moments = [
     before: 'ตีสอง และเดดไลน์เหลืออีกชั่วโมงเดียว',
     after: 'SEWORK เตือนก่อนหมดเวลา และยืนยันทันทีที่คุณส่งสำเร็จ',
     Icon: BookIcon,
+    gradient: apps[0].gradient,
   },
   {
     before: 'ไฟล์สำคัญหายไป ก่อนวันพรีเซนต์แค่คืนเดียว',
     after: 'CLOUDFILES เก็บทุกไฟล์ไว้ในที่เดียว พร้อมสิทธิ์และรหัสผ่านที่คุณกำหนดเอง',
     Icon: CloudIcon,
+    gradient: apps[1].gradient,
   },
   {
     before: 'ไอเดียกำลังมา แต่เครื่องยังไม่พร้อมรัน',
     after: 'CODING เปิดเบราว์เซอร์แล้วเขียน รัน และเรียนรู้ได้ในไม่กี่วินาที',
     Icon: CodeIcon,
+    gradient: apps[2].gradient,
   },
 ]
 
@@ -312,9 +234,9 @@ const dayStory = [
 ]
 
 const principles = [
-  { Icon: BoltIcon, title: 'ง่ายจนลืมว่ากำลังใช้งาน', text: 'ทุกอย่างอยู่ใกล้มือ เพื่อให้คุณใช้พลังไปกับการเรียนรู้ ไม่ใช่การหาว่าต้องกดตรงไหน' },
-  { Icon: ShieldIcon, title: 'ปลอดภัยเหมือนมีกุญแจของตัวเอง', text: 'สิทธิ์การเข้าถึงและรหัสผ่านโฟลเดอร์อยู่ในมือคุณ คุณเลือกเองว่าจะแบ่งปันให้ใคร' },
-  { Icon: HeartIcon, title: 'ออกแบบด้วยความเข้าใจ', text: 'สร้างจากชีวิตจริงของนักศึกษาวิศวกรรมซอฟต์แวร์ ทั้งคืนเดดไลน์ งานกลุ่ม และความภูมิใจเมื่อโค้ดรันผ่าน' },
+  { Icon: BoltIcon, tint: 'from-[#ffd36b] to-[#ff9f0a]', title: 'ง่ายจนลืมว่ากำลังใช้งาน', text: 'ทุกอย่างอยู่ใกล้มือ เพื่อให้คุณใช้พลังไปกับการเรียนรู้ ไม่ใช่การหาว่าต้องกดตรงไหน' },
+  { Icon: ShieldIcon, tint: 'from-[#5ab0ff] to-[#0071e3]', title: 'ปลอดภัยเหมือนมีกุญแจของตัวเอง', text: 'สิทธิ์การเข้าถึงและรหัสผ่านโฟลเดอร์อยู่ในมือคุณ คุณเลือกเองว่าจะแบ่งปันให้ใคร' },
+  { Icon: HeartIcon, tint: 'from-[#ff9db5] to-[#ff375f]', title: 'ออกแบบด้วยความเข้าใจ', text: 'สร้างจากชีวิตจริงของนักศึกษาวิศวกรรมซอฟต์แวร์ ทั้งคืนเดดไลน์ งานกลุ่ม และความภูมิใจเมื่อโค้ดรันผ่าน' },
 ]
 
 const faqs = [
@@ -467,27 +389,27 @@ function HeroMock() {
     <div className="relative isolate mx-auto mt-16 max-w-[880px] md:mt-24">
       <div
         aria-hidden
-        className="absolute -inset-x-8 -bottom-10 -top-10 -z-10 opacity-70 blur-3xl"
+        className="absolute -inset-x-10 -bottom-12 -top-12 -z-10 opacity-80 blur-3xl"
         style={{
           background:
-            'radial-gradient(55% 55% at 28% 30%, rgba(0,113,227,0.28), transparent), radial-gradient(50% 50% at 75% 70%, rgba(94,92,230,0.24), transparent), radial-gradient(40% 40% at 50% 100%, rgba(255,90,54,0.16), transparent)',
+            'radial-gradient(55% 55% at 28% 30%, rgba(0,113,227,0.3), transparent), radial-gradient(50% 50% at 75% 70%, rgba(94,92,230,0.26), transparent), radial-gradient(40% 40% at 50% 100%, rgba(255,90,54,0.18), transparent)',
         }}
       />
 
-      <div className="overflow-hidden rounded-[24px] bg-white text-left shadow-[0_30px_80px_rgba(0,0,0,0.12)] ring-1 ring-black/[0.06]">
-        <div className="flex h-11 items-center gap-2 border-b border-black/[0.06] bg-[#fbfbfd] px-5">
+      <div className="overflow-hidden rounded-[28px] bg-white/90 text-left shadow-[0_40px_100px_-30px_rgba(0,0,0,0.3)] ring-1 ring-black/[0.06] backdrop-blur-xl">
+        <div className="flex h-11 items-center gap-2 border-b border-black/[0.06] bg-[#fbfbfd]/90 px-5">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-          <div className="mx-auto flex h-6 w-44 items-center justify-center rounded-md bg-black/[0.05] text-[11px] font-medium text-[#6e6e73] md:w-64">
-            se-one.site
+          <div className="mx-auto flex h-6 w-44 items-center justify-center gap-1.5 rounded-md bg-black/[0.05] text-[11px] font-medium text-[#6e6e73] md:w-64">
+            <LockIcon className="h-3 w-3" /> se-one.site
           </div>
           <span className="w-[52px]" />
         </div>
 
         <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3 md:p-8">
           {/* SEWORK */}
-          <div className="rounded-2xl bg-[#f5f5f7] p-4">
+          <div className="rounded-[20px] bg-[#f5f5f7] p-4">
             <div className="flex items-center gap-2">
               <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${apps[0].gradient}`}>
                 <BookIcon className="h-4 w-4 text-white" />
@@ -509,14 +431,14 @@ function HeroMock() {
               {[78, 64, 52].map((w, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <span className="w-3 text-[10px] font-semibold text-[#86868b]">{i + 1}</span>
-                  <div className="h-2 rounded-full bg-[#0071e3]/25" style={{ width: `${w}%` }} />
+                  <div className="h-2 rounded-full bg-gradient-to-r from-[#5ab0ff] to-[#0071e3] opacity-40" style={{ width: `${w}%` }} />
                 </div>
               ))}
             </div>
           </div>
 
           {/* CLOUDFILES */}
-          <div className="rounded-2xl bg-[#f5f5f7] p-4">
+          <div className="rounded-[20px] bg-[#f5f5f7] p-4">
             <div className="flex items-center gap-2">
               <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${apps[1].gradient}`}>
                 <CloudIcon className="h-4 w-4 text-white" />
@@ -538,7 +460,7 @@ function HeroMock() {
           </div>
 
           {/* CODING */}
-          <div className="rounded-2xl bg-[#1d1d1f] p-4 text-white">
+          <div className="rounded-[20px] bg-[#1d1d1f] p-4 text-white">
             <div className="flex items-center gap-2">
               <div className={`flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${apps[2].gradient}`}>
                 <CodeIcon className="h-4 w-4 text-white" />
@@ -560,44 +482,47 @@ function HeroMock() {
   )
 }
 
-/* ================= Feature tile ================= */
-function Tile({ app, className = '', delay = 0 }) {
+/* ================= Module tile ================= */
+function Tile({ app, wide = false, delay = 0 }) {
   const { Icon } = app
   return (
-    <Reveal delay={delay} className={className}>
-      <article className="group relative flex h-full min-h-[480px] flex-col items-center overflow-hidden rounded-[28px] bg-[#f5f5f7] px-8 pt-12 text-center transition-colors duration-500 hover:bg-[#f0f0f3]">
-        <p className={`text-[14px] font-semibold tracking-[0.04em] ${app.accent}`}>{app.name}</p>
+    <Reveal delay={delay} className={wide ? 'md:col-span-2' : ''}>
+      <article
+        className={`group relative flex h-full flex-col justify-end overflow-hidden rounded-[32px] bg-gradient-to-br ${app.gradient} p-8 text-white shadow-[0_24px_60px_-24px_rgba(0,0,0,0.4)] transition-transform duration-700 ease-[cubic-bezier(.28,.11,.32,1)] hover:scale-[1.012] md:p-12 ${
+          wide ? 'min-h-[440px] md:min-h-[480px]' : 'min-h-[500px]'
+        }`}
+      >
+        {/* oversized icon watermark */}
+        <Icon className="absolute -right-10 -top-10 h-[320px] w-[320px] text-white/15 transition-transform duration-1000 group-hover:rotate-6 group-hover:scale-110" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
 
-        <h3 className="mt-2 whitespace-pre-line text-[28px] font-semibold leading-[1.25] tracking-[-0.02em] md:text-[34px]">
-          {app.headline}
-        </h3>
+        <div className="absolute left-8 top-8 flex h-14 w-14 items-center justify-center rounded-[18px] bg-white/20 ring-1 ring-white/40 backdrop-blur-md md:left-12 md:top-12">
+          <Icon className="h-7 w-7" />
+        </div>
 
-        <p className={`mt-3 text-[15px] font-medium ${app.accent}`}>{app.feeling}</p>
+        <div className="relative">
+          <p className="text-[15px] font-semibold tracking-[0.02em] text-white/85">{app.name}</p>
+          <h3 className="mt-2 whitespace-pre-line text-[30px] font-semibold leading-[1.2] tracking-[-0.03em] md:text-[44px]">
+            {app.headline}
+          </h3>
+          <p className="mt-3 text-[17px] font-medium text-white/90">{app.feeling}</p>
+          <p className="mt-3 max-w-[520px] text-[16px] leading-[1.7] text-white/85">{app.description}</p>
 
-        <p className="mt-3 max-w-[480px] text-[16px] leading-[1.65] text-[#6e6e73]">{app.description}</p>
+          <ul className="mt-5 flex flex-wrap gap-2" aria-label={`ฟีเจอร์ของ ${app.name}`}>
+            {app.chips.map((c) => (
+              <li key={c} className="rounded-full bg-white/20 px-3.5 py-1 text-[13px] font-medium ring-1 ring-white/30 backdrop-blur-md">
+                {c}
+              </li>
+            ))}
+          </ul>
 
-        <ul className="mt-5 flex flex-wrap justify-center gap-2" aria-label={`ฟีเจอร์ของ ${app.name}`}>
-          {app.chips.map((c) => (
-            <li key={c} className="rounded-full bg-white px-3 py-1 text-[13px] text-[#1d1d1f] ring-1 ring-black/[0.06]">
-              {c}
-            </li>
-          ))}
-        </ul>
-
-        <Link
-          to={app.to}
-          className="mt-6 inline-flex items-center gap-1 text-[17px] text-[#0066cc] underline-offset-4 after:absolute after:inset-0 after:content-[''] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3] group-hover:underline"
-        >
-          ดูรายละเอียดเพิ่มเติม
-          <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
-        </Link>
-
-        <div className="mt-auto pt-10">
-          <div
-            className={`flex h-[120px] w-[120px] translate-y-8 items-center justify-center rounded-[34px] bg-gradient-to-br ${app.gradient} ${app.glow} transition-transform duration-700 ease-[cubic-bezier(.28,.11,.32,1)] group-hover:translate-y-2`}
+          <Link
+            to={app.to}
+            className="mt-7 inline-flex items-center gap-1 rounded-full bg-white px-5 py-2.5 text-[15px] font-medium text-[#1d1d1f] transition-colors after:absolute after:inset-0 after:content-[''] hover:bg-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
-            <Icon className="h-14 w-14 text-white" />
-          </div>
+            ดูรายละเอียดเพิ่มเติม
+            <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+          </Link>
         </div>
       </article>
     </Reveal>
@@ -612,7 +537,7 @@ function FaqItem({ q, a }) {
         {q}
         <span
           aria-hidden
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f5f5f7] text-[18px] text-[#6e6e73] transition-transform duration-300 group-open:rotate-45"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f5f5f7] text-[20px] text-[#6e6e73] transition duration-300 group-open:rotate-45 group-open:bg-[#0071e3] group-open:text-white"
         >
           +
         </span>
@@ -637,246 +562,234 @@ export default function Landing() {
 
   return (
     <ThemeProvider theme={theme}>
-    <Global styles={globalStyles} />
-    <div className="flex w-full flex-col items-center text-[#1d1d1f]">
-      {/* ---------- Hero ---------- */}
-      <section className="relative w-full overflow-hidden bg-[#fbfbfd]">
-        <Aurora aria-hidden />
-        <div className="relative z-10 mx-auto max-w-[1024px] px-5 pb-20 pt-16 text-center md:pb-32 md:pt-24">
-          <Reveal>
-            <div className="mb-6 flex justify-center">
-              <BrandLogo size={88} float alt="โลโก้ SE-ONE" />
-            </div>
-          </Reveal>
+      <Global styles={globalStyles} />
+      <div className="flex w-full flex-col items-center text-[#1d1d1f]">
+        {/* ---------- Hero ---------- */}
+        <section className="relative w-full overflow-hidden bg-[#fbfbfd]">
+          <Aurora aria-hidden />
+          <div className="relative z-10 mx-auto max-w-[1024px] px-5 pb-20 pt-16 text-center md:pb-32 md:pt-24">
+            <Reveal>
+              <div className="mb-6 flex justify-center">
+                <BrandLogo size={88} float alt="โลโก้ SE-ONE" />
+              </div>
+            </Reveal>
 
-          <Reveal>
-            <p className="mb-4 text-[17px] font-semibold text-[#6e6e73] md:text-[21px]">
-              SE-ONE · สำหรับนักศึกษา SE RMUTL 69 รุ่นที่ 4
-            </p>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <h1 className="text-[44px] font-semibold leading-[1.1] tracking-[-0.04em] sm:text-[64px] md:text-[88px]">
-              ทุกความฝัน
-              <br />
-              <GradientText>เริ่มจากบรรทัดแรก.</GradientText>
-            </h1>
-          </Reveal>
-
-          <Reveal delay={160}>
-            <p className="mx-auto mt-6 max-w-[720px] text-[19px] font-medium leading-[1.6] tracking-[-0.01em] text-[#6e6e73] md:text-[24px]">
-              เรียน ส่งงาน เก็บไฟล์ และเขียนโค้ด ครบในที่เดียว
-              เพื่อให้คุณมีสมาธิกับสิ่งสำคัญที่สุด คือการเติบโตเป็นวิศวกรซอฟต์แวร์ที่คุณอยากเป็น
-            </p>
-          </Reveal>
-
-          <Reveal delay={240}>
-            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
-              <Link
-                to="/sework/landing"
-                className="rounded-full bg-[#0071e3] px-[22px] py-3 text-[17px] font-normal text-white transition-colors hover:bg-[#0077ed] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
-              >
-                เริ่มต้นกับ SEWORK
-              </Link>
-              <Link
-                to="/about"
-                className="group inline-flex items-center gap-1 text-[17px] text-[#0066cc] underline-offset-4 hover:underline"
-              >
-                เรื่องราวของโครงการ
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
-              </Link>
-            </div>
-          </Reveal>
-
-          <Reveal delay={320}>
-            <HeroMock />
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ---------- Statement (scroll-lit) ---------- */}
-      <section className="w-full bg-white">
-        <div className="mx-auto max-w-[900px] px-5 py-28 text-center md:py-44">
-          <ScrollWords
-            text="คืนก่อนส่งงาน ไม่ควรเป็นคืนที่น่ากลัว ไฟล์ของคุณควรอยู่ตรงนั้นเสมอ และไอเดียดี ๆ ควรได้ลองรันทันทีที่คิดออก เพราะทุกวิศวกรซอฟต์แวร์เก่ง ๆ ล้วนเริ่มจากบรรทัดแรกที่กล้าเขียน"
-            className="text-[28px] font-semibold leading-[1.45] tracking-[-0.025em] sm:text-[40px] md:text-[52px]"
-          />
-        </div>
-      </section>
-
-      {/* ---------- Empathy ---------- */}
-      <section className="w-full bg-black text-white">
-        <div className="mx-auto max-w-[1024px] px-5 py-24 md:py-36">
-          <Reveal>
-            <div className="mx-auto max-w-[760px] text-center">
-              <h2 className="text-[34px] font-semibold leading-[1.2] tracking-[-0.03em] md:text-[56px]">
-                เราเข้าใจความรู้สึกนั้น.
-              </h2>
-              <p className="mt-4 text-[17px] leading-[1.65] text-[#a1a1a6] md:text-[21px]">
-                ทุกคนเคยผ่านช่วงเวลาที่หัวใจเต้นแรง SE-ONE จึงถูกสร้างมาเพื่อให้ช่วงเวลาเหล่านั้นผ่านไปได้ง่ายขึ้น
+            <Reveal>
+              <p className="mb-4 text-[17px] font-semibold text-[#6e6e73] md:text-[21px]">
+                SE-ONE · สำหรับนักศึกษา SE RMUTL 69 รุ่นที่ 4
               </p>
-            </div>
-          </Reveal>
+            </Reveal>
 
-          <div className="mt-14 grid grid-cols-1 gap-5 md:mt-20 md:grid-cols-3">
-            {moments.map((m, i) => (
-              <Reveal key={m.before} delay={i * 100}>
-                <div className="flex h-full flex-col rounded-[24px] bg-[#1d1d1f] p-7 md:p-8">
-                  <m.Icon className="h-7 w-7 text-[#86868b]" />
-                  <p className="mt-6 text-[19px] font-semibold leading-[1.4] tracking-[-0.01em] text-[#a1a1a6]">
-                    {m.before}
-                  </p>
-                  <div className="my-5 h-px w-full bg-white/10" />
-                  <p className="mt-auto text-[19px] font-semibold leading-[1.5] tracking-[-0.01em] text-white">
-                    {m.after}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
+            <Reveal delay={80}>
+              <h1 className="text-[48px] font-semibold leading-[1.06] tracking-[-0.045em] sm:text-[72px] md:text-[96px]">
+                ทุกความฝัน
+                <br />
+                <GradientText>เริ่มจากบรรทัดแรก.</GradientText>
+              </h1>
+            </Reveal>
+
+            <Reveal delay={160}>
+              <p className="mx-auto mt-6 max-w-[720px] text-[19px] font-medium leading-[1.6] tracking-[-0.01em] text-[#6e6e73] md:text-[24px]">
+                เรียน ส่งงาน เก็บไฟล์ และเขียนโค้ด ครบในที่เดียว
+                เพื่อให้คุณมีสมาธิกับสิ่งสำคัญที่สุด คือการเติบโตเป็นวิศวกรซอฟต์แวร์ที่คุณอยากเป็น
+              </p>
+            </Reveal>
+
+            <Reveal delay={240}>
+              <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+                <Link
+                  to="/sework/landing"
+                  className="rounded-full bg-[#0071e3] px-7 py-3.5 text-[17px] text-white shadow-[0_12px_28px_-10px_rgba(0,113,227,0.7)] transition duration-200 hover:bg-[#0077ed] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
+                >
+                  เริ่มต้นกับ SEWORK
+                </Link>
+                <Link to="/about" className="group inline-flex items-center gap-1 text-[17px] text-[#0066cc] underline-offset-4 hover:underline">
+                  เรื่องราวของโครงการ
+                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+                </Link>
+              </div>
+            </Reveal>
+
+            <Reveal delay={320}>
+              <HeroMock />
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ---------- Core Modules ---------- */}
-      <section className="w-full bg-white py-24 md:py-32">
-        <div className="mx-auto max-w-[1024px] px-5">
-          <Reveal>
-            <div className="mb-12 text-center md:mb-16">
-              <h2 className="text-[34px] font-semibold tracking-[-0.03em] md:text-[56px]">Core Modules</h2>
-              <p className="mx-auto mt-3 max-w-[640px] text-[17px] leading-[1.6] text-[#6e6e73] md:text-[21px]">
-                สามระบบหลักที่ออกแบบมาเพื่อสนับสนุนการเรียนรู้ และช่วยให้ศักยภาพของคุณเติบโตทุกวัน
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <Tile app={apps[0]} className="md:col-span-2" />
-            <Tile app={apps[1]} delay={80} />
-            <Tile app={apps[2]} delay={160} />
+        {/* ---------- Statement (scroll-lit) ---------- */}
+        <section className="w-full bg-white">
+          <div className="mx-auto max-w-[900px] px-5 py-28 text-center md:py-44">
+            <ScrollWords
+              text="คืนก่อนส่งงาน ไม่ควรเป็นคืนที่น่ากลัว ไฟล์ของคุณควรอยู่ตรงนั้นเสมอ และไอเดียดี ๆ ควรได้ลองรันทันทีที่คิดออก เพราะทุกวิศวกรซอฟต์แวร์เก่ง ๆ ล้วนเริ่มจากบรรทัดแรกที่กล้าเขียน"
+              className="text-[28px] font-semibold leading-[1.45] tracking-[-0.025em] sm:text-[40px] md:text-[52px]"
+            />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ---------- A day with SE-ONE ---------- */}
-      <section className="w-full bg-[#f5f5f7]">
-        <div className="mx-auto max-w-[1024px] px-5 py-24 md:py-36">
-          <Reveal>
-            <div className="mx-auto max-w-[760px] text-center">
-              <h2 className="text-[34px] font-semibold leading-[1.2] tracking-[-0.03em] md:text-[56px]">
-                หนึ่งวัน ที่ไม่ต้องรีบร้อน.
-              </h2>
-              <p className="mt-4 text-[17px] leading-[1.65] text-[#6e6e73] md:text-[21px]">
-                ลองนึกภาพวันธรรมดาของนักศึกษาคนหนึ่ง ที่ทุกอย่างลื่นไหลไปตามจังหวะของมัน
-              </p>
-            </div>
-          </Reveal>
+        {/* ---------- Empathy ---------- */}
+        <section className="relative w-full overflow-hidden bg-black text-white">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-32 top-1/3 h-[420px] w-[420px] rounded-full bg-[#0071e3]/25 blur-[130px]" />
+            <div className="absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-[#7c3aed]/25 blur-[130px]" />
+          </div>
+          <div className="relative mx-auto max-w-[1024px] px-5 py-24 md:py-36">
+            <Reveal>
+              <div className="mx-auto max-w-[760px] text-center">
+                <h2 className="text-[36px] font-semibold leading-[1.15] tracking-[-0.035em] md:text-[60px]">เราเข้าใจความรู้สึกนั้น.</h2>
+                <p className="mt-4 text-[17px] leading-[1.65] text-[#a1a1a6] md:text-[21px]">
+                  ทุกคนเคยผ่านช่วงเวลาที่หัวใจเต้นแรง SE-ONE จึงถูกสร้างมาเพื่อให้ช่วงเวลาเหล่านั้นผ่านไปได้ง่ายขึ้น
+                </p>
+              </div>
+            </Reveal>
 
-          <ol className="relative mx-auto mt-14 max-w-[760px] md:mt-20">
-            <span aria-hidden className="absolute bottom-3 left-[11px] top-3 w-px bg-black/[0.12] md:left-[91px]" />
-            {dayStory.map((d, i) => (
-              <li key={d.time} className="relative pb-12 last:pb-0">
-                <Reveal delay={i * 60}>
-                  <div className="flex gap-5 md:gap-8">
-                    <time className="hidden w-[64px] shrink-0 pt-0.5 text-right text-[17px] font-semibold tabular-nums text-[#6e6e73] md:block">
-                      {d.time}
-                    </time>
-                    <span
-                      aria-hidden
-                      className="relative z-10 mt-1.5 h-[23px] w-[23px] shrink-0 rounded-full border-[6px] border-[#f5f5f7] bg-[#0071e3] ring-1 ring-[#0071e3]/30"
-                    />
-                    <div>
-                      <p className="text-[15px] font-semibold tabular-nums text-[#0071e3] md:hidden">{d.time}</p>
-                      <h3 className="text-[22px] font-semibold leading-[1.3] tracking-[-0.02em] md:text-[28px]">{d.title}</h3>
-                      <p className="mt-2 text-[17px] leading-[1.7] text-[#6e6e73]">{d.text}</p>
+            <div className="mt-14 grid grid-cols-1 gap-5 md:mt-20 md:grid-cols-3">
+              {moments.map((m, i) => (
+                <Reveal key={m.before} delay={i * 100}>
+                  <div className="flex h-full flex-col rounded-[28px] bg-white/[0.06] p-7 ring-1 ring-white/10 backdrop-blur-xl md:p-8">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-[15px] bg-gradient-to-br ${m.gradient} shadow-[0_8px_20px_rgba(0,0,0,0.4)]`}>
+                      <m.Icon className="h-6 w-6 text-white" />
                     </div>
+                    <p className="mt-6 text-[19px] font-semibold leading-[1.4] tracking-[-0.01em] text-[#86868b]">{m.before}</p>
+                    <div className="my-5 h-px w-full bg-white/10" />
+                    <p className="mt-auto text-[19px] font-semibold leading-[1.5] tracking-[-0.01em] text-white">{m.after}</p>
                   </div>
                 </Reveal>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ---------- Principles ---------- */}
-      <section className="w-full bg-white">
-        <div className="mx-auto max-w-[1024px] px-5 py-24 md:py-36">
-          <Reveal>
-            <h2 className="mx-auto max-w-[760px] text-center text-[34px] font-semibold leading-[1.2] tracking-[-0.03em] md:text-[56px]">
-              สร้างด้วยความใส่ใจ
-              <br className="hidden sm:block" /> ในทุกรายละเอียด.
-            </h2>
-          </Reveal>
-
-          <div className="mt-14 grid grid-cols-1 gap-10 md:mt-20 md:grid-cols-3 md:gap-12">
-            {principles.map((p, i) => (
-              <Reveal key={p.title} delay={i * 100}>
-                <div className="text-center md:text-left">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f5f5f7] md:mx-0">
-                    <p.Icon className="h-7 w-7 text-[#0071e3]" />
-                  </div>
-                  <h3 className="mt-5 text-[21px] font-semibold leading-[1.35] tracking-[-0.02em]">{p.title}</h3>
-                  <p className="mt-2 text-[17px] leading-[1.7] text-[#6e6e73]">{p.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- FAQ ---------- */}
-      <section className="w-full bg-white pb-24 md:pb-36">
-        <div className="mx-auto max-w-[860px] px-5">
-          <Reveal>
-            <h2 className="mb-6 text-[30px] font-semibold tracking-[-0.03em] md:text-[44px]">คำถามที่พบบ่อย</h2>
-            <div className="border-t border-black/[0.1]">
-              {faqs.map((f) => (
-                <FaqItem key={f.q} {...f} />
               ))}
             </div>
-          </Reveal>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* ---------- Closing CTA ---------- */}
-      <section className="w-full overflow-hidden bg-[#f5f5f7]">
-        <div className="relative isolate mx-auto max-w-[1024px] px-5 py-28 text-center md:py-40">
-          <div
-            aria-hidden
-            className="absolute inset-x-0 top-1/2 -z-10 mx-auto h-[360px] max-w-[720px] -translate-y-1/2 opacity-60 blur-3xl"
-            style={{
-              background:
-                'radial-gradient(50% 50% at 35% 50%, rgba(0,113,227,0.22), transparent), radial-gradient(50% 50% at 70% 50%, rgba(94,92,230,0.2), transparent)',
-            }}
-          />
+        {/* ---------- Core Modules ---------- */}
+        <section className="w-full bg-[#f5f5f7] py-24 md:py-36">
+          <div className="mx-auto max-w-[1024px] px-5">
+            <Reveal>
+              <div className="mb-12 text-center md:mb-16">
+                <h2 className="text-[36px] font-semibold tracking-[-0.035em] md:text-[60px]">Core Modules</h2>
+                <p className="mx-auto mt-3 max-w-[640px] text-[17px] leading-[1.6] text-[#6e6e73] md:text-[21px]">
+                  สามระบบหลักที่ออกแบบมาเพื่อสนับสนุนการเรียนรู้ และช่วยให้ศักยภาพของคุณเติบโตทุกวัน
+                </p>
+              </div>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <Tile app={apps[0]} wide />
+              <Tile app={apps[1]} delay={80} />
+              <Tile app={apps[2]} delay={160} />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- A day with SE-ONE ---------- */}
+        <section className="w-full bg-white">
+          <div className="mx-auto max-w-[1024px] px-5 py-24 md:py-36">
+            <Reveal>
+              <div className="mx-auto max-w-[760px] text-center">
+                <h2 className="text-[36px] font-semibold leading-[1.15] tracking-[-0.035em] md:text-[60px]">หนึ่งวัน ที่ไม่ต้องรีบร้อน.</h2>
+                <p className="mt-4 text-[17px] leading-[1.65] text-[#6e6e73] md:text-[21px]">
+                  ลองนึกภาพวันธรรมดาของนักศึกษาคนหนึ่ง ที่ทุกอย่างลื่นไหลไปตามจังหวะของมัน
+                </p>
+              </div>
+            </Reveal>
+
+            <ol className="relative mx-auto mt-14 max-w-[760px] md:mt-20">
+              <span aria-hidden className="absolute bottom-3 left-[11px] top-3 w-px bg-gradient-to-b from-[#0071e3] via-[#5e5ce6] to-[#bf5af2] opacity-40 md:left-[107px]" />
+              {dayStory.map((d, i) => (
+                <li key={d.time} className="relative pb-10 last:pb-0">
+                  <Reveal delay={i * 60}>
+                    <div className="flex gap-5 md:gap-8">
+                      <time className="hidden w-[64px] shrink-0 pt-1 text-right text-[17px] font-semibold tabular-nums text-[#6e6e73] md:block">
+                        {d.time}
+                      </time>
+                      <span
+                        aria-hidden
+                        className="relative z-10 mt-1.5 h-6 w-6 shrink-0 rounded-full border-[6px] border-white bg-gradient-to-br from-[#0071e3] to-[#5e5ce6] shadow-[0_0_0_1px_rgba(0,113,227,0.3)]"
+                      />
+                      <div className="flex-1 rounded-[24px] bg-[#f5f5f7] p-6 md:p-7">
+                        <p className="text-[15px] font-semibold tabular-nums text-[#0071e3] md:hidden">{d.time}</p>
+                        <h3 className="text-[21px] font-semibold leading-[1.3] tracking-[-0.02em] md:text-[26px]">{d.title}</h3>
+                        <p className="mt-2 text-[17px] leading-[1.7] text-[#6e6e73]">{d.text}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ---------- Principles ---------- */}
+        <section className="w-full bg-[#f5f5f7]">
+          <div className="mx-auto max-w-[1024px] px-5 py-24 md:py-36">
+            <Reveal>
+              <h2 className="mx-auto max-w-[760px] text-center text-[36px] font-semibold leading-[1.15] tracking-[-0.035em] md:text-[60px]">
+                สร้างด้วยความใส่ใจ
+                <br className="hidden sm:block" /> ในทุกรายละเอียด.
+              </h2>
+            </Reveal>
+
+            <div className="mt-14 grid grid-cols-1 gap-5 md:mt-20 md:grid-cols-3">
+              {principles.map((p, i) => (
+                <Reveal key={p.title} delay={i * 100}>
+                  <div className="h-full rounded-[28px] bg-white p-8 ring-1 ring-black/[0.04] transition-transform duration-500 hover:-translate-y-1">
+                    <div className={`flex h-14 w-14 items-center justify-center rounded-[18px] bg-gradient-to-br ${p.tint} shadow-[0_10px_24px_-8px_rgba(0,0,0,0.3)]`}>
+                      <p.Icon className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="mt-6 text-[21px] font-semibold leading-[1.35] tracking-[-0.02em]">{p.title}</h3>
+                    <p className="mt-2 text-[16px] leading-[1.7] text-[#6e6e73]">{p.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- FAQ ---------- */}
+        <section className="w-full bg-white py-24 md:py-36">
+          <div className="mx-auto max-w-[860px] px-5">
+            <Reveal>
+              <h2 className="mb-6 text-[32px] font-semibold tracking-[-0.03em] md:text-[48px]">คำถามที่พบบ่อย</h2>
+              <div className="border-t border-black/[0.1]">
+                {faqs.map((f) => (
+                  <FaqItem key={f.q} {...f} />
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ---------- Closing CTA ---------- */}
+        <section className="w-full bg-white px-5 pb-20 md:pb-28">
           <Reveal>
-            <h2 className="text-[38px] font-semibold leading-[1.15] tracking-[-0.035em] md:text-[64px]">
-              การเดินทางของคุณ
-              <br />
-              เริ่มตรงนี้.
-            </h2>
-            <p className="mx-auto mt-5 max-w-[600px] text-[17px] leading-[1.7] text-[#6e6e73] md:text-[21px]">
-              อีกไม่กี่ปี คุณจะมองย้อนกลับมายังวันนี้ แล้วยิ้มให้กับวันที่ตัดสินใจก้าวเข้ามา
-              เข้าสู่ระบบเพื่อใช้งานทุกโมดูลของ SE-ONE
-            </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
-              <Link
-                to="/sework/login"
-                className="rounded-full bg-[#0071e3] px-[22px] py-3 text-[17px] text-white transition-colors hover:bg-[#0077ed] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0071e3]"
-              >
-                เข้าสู่ระบบ
-              </Link>
-              <Link
-                to="/support"
-                className="group inline-flex items-center gap-1 text-[17px] text-[#0066cc] underline-offset-4 hover:underline"
-              >
-                ต้องการความช่วยเหลือ
-                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
-              </Link>
+            <div className="relative isolate mx-auto max-w-[1024px] overflow-hidden rounded-[40px] bg-black px-6 py-20 text-center text-white md:py-32">
+              <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+                <div className="absolute -left-20 top-0 h-[360px] w-[360px] rounded-full bg-[#0071e3]/40 blur-[110px]" />
+                <div className="absolute -right-16 bottom-0 h-[360px] w-[360px] rounded-full bg-[#bf5af2]/35 blur-[110px]" />
+              </div>
+              <h2 className="text-[40px] font-semibold leading-[1.1] tracking-[-0.04em] md:text-[68px]">
+                การเดินทางของคุณ
+                <br />
+                <GradientText>เริ่มตรงนี้.</GradientText>
+              </h2>
+              <p className="mx-auto mt-5 max-w-[600px] text-[17px] leading-[1.7] text-[#a1a1a6] md:text-[21px]">
+                อีกไม่กี่ปี คุณจะมองย้อนกลับมายังวันนี้ แล้วยิ้มให้กับวันที่ตัดสินใจก้าวเข้ามา
+                เข้าสู่ระบบเพื่อใช้งานทุกโมดูลของ SE-ONE
+              </p>
+              <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+                <Link
+                  to="/sework/login"
+                  className="rounded-full bg-white px-7 py-3.5 text-[17px] font-medium text-[#1d1d1f] transition duration-200 hover:bg-[#e8e8ed] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  เข้าสู่ระบบ
+                </Link>
+                <Link to="/support" className="group inline-flex items-center gap-1 text-[17px] text-[#2997ff] underline-offset-4 hover:underline">
+                  ต้องการความช่วยเหลือ
+                  <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-0.5">›</span>
+                </Link>
+              </div>
             </div>
           </Reveal>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
     </ThemeProvider>
   )
 }

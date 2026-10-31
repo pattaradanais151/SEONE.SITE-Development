@@ -10,4 +10,4 @@ Disallow: /cloudfiles/dashboard
 Disallow: /coding/workspace
 Disallow: /api/
 
-Sitemap: https://seone.site/sitemap.xml
+Sitemap: https://404.seone.site/sitemap.xml
